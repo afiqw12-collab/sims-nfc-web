@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Inventory System</title>
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --header-height: 64px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--background); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            padding-top: var(--header-height);
+        }
+
+        .btn { 
+            padding: 0.75rem 1.25rem; 
+            border-radius: 8px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+            transition: all 0.2s; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 0.5rem; 
+            width: 100%; 
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-secondary { background: white; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-secondary:hover { background: var(--background); }
+        
+        .item-row { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: #f8fafc; border-radius: 8px; margin-bottom: 0.5rem; }
+        .item-row .item-name { flex: 1; font-weight: 500; }
+        .item-row .item-qty { display: flex; align-items: center; gap: 0.5rem; }
+        .item-row .qty-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: var(--primary); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .item-row .qty-btn.minus { background: var(--danger); }
+        .item-row .qty-btn:hover { opacity: 0.8; }
+        .item-row .delete-btn { color: var(--danger); background: none; border: none; cursor: pointer; padding: 4px; }
+        
+        .staff-result-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px; padding: 1.5rem; margin-top: 1.5rem; }
+        .staff-result-card .storage-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .staff-result-card h3 { color: white; font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .staff-result-card .tag-badge { background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; }
+        .staff-result-card .contents-box { background: rgba(255,255,255,0.15); border-radius: 12px; padding: 1rem; margin: 1rem 0; }
+        .staff-result-card .item-row { background: rgba(255,255,255,0.2); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.5rem; color: white; }
+        .staff-result-card .item-row:last-child { margin-bottom: 0; }
+        .staff-result-card label { color: rgba(255,255,255,0.8); font-size: 0.85rem; }
+        .staff-result-card textarea { background: rgba(255,255,255,0.9); border: none; border-radius: 8px; }
+        .staff-result-card .btn-danger { background: white; color: #764ba2; }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; width: auto; }
+
+        .card { 
+            background: var(--surface); 
+            border-radius: var(--radius); 
+            padding: 1.5rem; 
+            box-shadow: var(--shadow); 
+            margin-bottom: 1rem; 
+            border: 1px solid var(--border);
+        }
+
+        .input-group { margin-bottom: 1.25rem; text-align: left; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--text-main); }
+        .input-group input, .input-group select, .input-group textarea { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid var(--border); 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+        .input-with-scan { display: flex; gap: 0.5rem; }
+        .input-with-scan input { flex: 1; }
+        .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .input-group small { color: var(--text-light); font-size: 0.8rem; margin-top: 0.25rem; display: block; }
+
+        .badge { padding: 0.25rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-admin { background: #fee2e2; color: #991b1b; }
+        .badge-staff { background: #e0f2fe; color: #0369a1; }
+
+        .storage-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .storage-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #2563eb, #1e40af);
+            border-radius: 4px 0 0 4px;
+        }
+        .storage-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(37, 99, 235, 0.15);
+            border-color: #2563eb;
+        }
+        .storage-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        .storage-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .storage-card-title i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+        .storage-card-id {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: #475569;
+            letter-spacing: 0.5px;
+        }
+        .storage-card-contents {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--border);
+        }
+        .storage-item-tag {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .storage-item-tag .qty {
+            background: #2563eb;
+            color: white;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .staff-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .staff-card:hover {
+            border-color: #10b981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+        }
+        .staff-card-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .staff-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .staff-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        .empty-state h3 {
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        header { 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 1.5rem; 
+            height: var(--header-height); 
+            display: none;
+            justify-content: space-between; 
+            align-items: center; 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            z-index: 50; 
+        }
+        
+        .logo { font-weight: 800; font-size: 1.25rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; }
+        .logo i { color: var(--primary); }
+        
+        main { flex: 1; padding: 1.5rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+        .view { display: none; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .view.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .nav-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 0.25rem; -webkit-overflow-scrolling: touch; }
+        .nav-item { 
+            padding: 0.6rem 1.2rem; 
+            border-radius: 99px; 
+            cursor: pointer; 
+            font-weight: 500; 
+            white-space: nowrap; 
+            background: transparent; 
+            color: var(--text-light); 
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .nav-item:hover { background: #f1f5f9; }
+        .nav-item.active { background: var(--text-main); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f1f5f9; }
+        .list-item:last-child { border-bottom: none; }
+        .list-info h4 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .list-info small { color: var(--text-light); font-size: 0.85rem; }
+        .list-actions { display: flex; gap: 0.5rem; }
+
+        .scanner-zone { 
+            text-align: center; 
+            padding: 3rem 1rem; 
+            border: 2px dashed var(--border); 
+            border-radius: var(--radius); 
+            margin-bottom: 1.5rem; 
+            position: relative; 
+            transition: all 0.3s;
+            background: white;
+        }
+
+        #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: #1e293b; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); font-size: 0.9rem; opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: auto; display: flex; align-items: center; gap: 10px; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error { background: var(--danger); }
+        .toast.success { background: var(--success); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 100; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        .modal-content { background: var(--surface); padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: scale(0.95); transition: transform 0.3s; }
+        .modal-overlay.open .modal-content { transform: scale(1); }
+
+        #global-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--background); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; transition: opacity 0.3s; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .alert-box { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; display: flex; gap: 0.5rem; }
+
+        .platform-banner { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 0.75rem; }
+        .platform-banner.ios { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; }
+        .platform-banner.desktop { background: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; }
+        .platform-banner i { font-size: 1.25rem; margin-top: 0.1rem; }
+
+        .divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; color: var(--text-light); font-size: 0.85rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem; }
+        .quick-action-btn { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1rem 0.5rem; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+        .quick-action-btn:hover { border-color: var(--primary); background: #f8fafc; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }
+        .quick-action-btn i { font-size: 1.5rem; color: var(--primary); background: #eff6ff; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .quick-action-btn:hover i { background: var(--primary); color: white; }
+        .quick-action-btn span { font-weight: 600; font-size: 0.85rem; color: var(--text-main); }
+
+        .desktop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+        .stat-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; text-align: center; }
+        .stat-card .number { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .stat-card .label { font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem; }
+
+        .shortcut-hint { background: #f1f5f9; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--text-light); margin-top: 1rem; }
+        .shortcut-hint kbd { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 0.15rem 0.4rem; font-family: monospace; font-size: 0.75rem; }
+
+        @media (max-width: 768px) {
+            .desktop-grid { grid-template-columns: 1fr; }
+            .quick-actions { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .list-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .list-actions { width: 100%; justify-content: flex-end; }
+            .quick-actions { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="global-loader">
+        <div class="spinner"></div>
+        <p class="mt-4" style="color:var(--text-light); font-weight:500;">Loading System...</p>
+    </div>
+
+    <header id="app-header">
+        <div class="logo">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>SIMS</span>
+        </div>
+        <div class="user-info" style="display: flex; align-items: center; gap: 10px;">
+            <div class="text-right">
+                <div id="header-username" style="font-weight: 600; font-size: 0.9rem;">User</div>
+                <div id="header-role" class="badge" style="display:inline-block; margin-top:2px;">Role</div>
+            </div>
+            <button onclick="Auth.logout()" class="btn btn-secondary btn-sm" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="view-setup" class="view">
+            <div class="card text-center" style="margin-top: 2rem; border-top: 4px solid #2563eb; max-width: 500px; margin-left: auto; margin-right: auto;">
+                <div style="width:80px;height:80px;background:linear-gradient(135deg,#2563eb,#1e40af);border-radius:20px;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-rocket" style="font-size:2rem;color:white;"></i>
+                </div>
+                <h2 style="margin-bottom:0.5rem;">System Setup</h2>
+                <p style="color:var(--text-light);margin-bottom:1.5rem;">Create your main Administrator account to begin</p>
+                <form id="setup-form" style="text-align: left;">
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" id="setup-username" placeholder="Enter your name" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Admin Email</label>
+                        <input type="email" id="setup-email" placeholder="admin@company.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Create Password</label>
+                        <input type="password" id="setup-pass" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top:0.5rem;">Initialize System</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="view-login" class="view">
+            <div class="desktop-grid" style="margin-top: 2rem;">
+                <div class="card text-center" style="margin-top: 2rem; border-top: 4px solid #2563eb;">
+                    <div style="width:80px;height:80px;background:linear-gradient(135deg,#2563eb,#1e40af);border-radius:20px;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;">
+                        <i class="fa-solid fa-box-archive" style="font-size:2rem;color:white;"></i>
+                    </div>
+                    <h2 style="margin-bottom:0.5rem;">Smart Inventory</h2>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;">Sign in to access your dashboard</p>
+                    <form id="login-form">
+                        <div class="input-group">
+                            <input type="email" id="login-email" placeholder="Email Address" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="login-password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top:0.5rem;">Sign In</button>
+                    </form>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                        <p style="margin-bottom: 0.75rem; color: var(--text-light); font-size: 0.9rem;">Don't have an account?</p>
+                        <button type="button" onclick="UI.showRegisterModal()" class="btn btn-primary">
+                            <i class="fa-solid fa-user-plus"></i> Register Admin
+                        </button>
+                    </div>
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0;">
+                        <p style="margin-bottom: 0.75rem; color: #166534; font-size: 0.9rem; font-weight: 500;"><i class="fa-solid fa-flask"></i> Try Demo Accounts</p>
+                        <button type="button" onclick="DB.createDemoAccounts()" class="btn btn-secondary" style="background: #166534; color: white; border-color: #166534;" id="demo-btn">
+                            <i class="fa-solid fa-magic"></i> Create Demo Accounts
+                        </button>
+                        <div id="demo-accounts" style="display:none; margin-top:1rem; font-size:0.85rem; color:#166534;">
+                            <p style="font-weight:600; margin-bottom:0.5rem;">Demo Admin:</p>
+                            <code style="background:#fff;padding:0.25rem 0.5rem;border-radius:4px;display:block;margin-bottom:0.5rem;">admin@demo.com / demo123</code>
+                            <p style="font-weight:600; margin-bottom:0.5rem;">Demo Staff:</p>
+                            <code style="background:#fff;padding:0.25rem 0.5rem;border-radius:4px;display:block;">staff@demo.com / demo123</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 2rem; border-top: 4px solid #10b981;">
+                    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+                        <div style="width:40px;height:40px;background:linear-gradient(135deg,#10b981,#059669);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;"><i class="fa-solid fa-lightbulb"></i></div>
+                        <h3 style="margin:0;">How It Works</h3>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-info">
+                            <h4><i class="fa-solid fa-user-shield" style="color:#2563eb;"></i> Admin Mode</h4>
+                            <small>Register NFC tags to track storage</small>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-info">
+                            <h4><i class="fa-solid fa-users" style="color:#10b981;"></i> Staff Mode</h4>
+                            <small>Scan tags to view contents</small>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-info">
+                            <h4><i class="fa-solid fa-mobile-screen" style="color:#f59e0b;"></i> Mobile</h4>
+                            <small>Use NFC or manual entry</small>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-info">
+                            <h4><i class="fa-solid fa-desktop" style="color:#6366f1;"></i> Desktop</h4>
+                            <small>Use manual entry</small>
+                        </div>
+                    </div>
+                    <div class="shortcut-hint">
+                        <strong>Shortcuts:</strong> <kbd>Enter</kbd> Submit &nbsp; <kbd>Esc</kbd> Close
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-admin" class="view">
+            <div class="nav-tabs">
+                <div class="nav-item active" onclick="UI.switchTab('admin', 'inventory')">Inventory</div>
+                <div class="nav-item" onclick="UI.switchTab('admin', 'users')">Staff</div>
+                <div class="nav-item" onclick="UI.switchTab('admin', 'reports')">Reports</div>
+            </div>
+
+            <div id="tab-admin-inventory" class="tab-content">
+                <div id="platform-info"></div>
+                <div class="desktop-grid">
+                    <div class="card" style="border-top: 3px solid #2563eb;">
+                        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                            <div style="width:40px;height:40px;background:linear-gradient(135deg,#2563eb,#1e40af);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;"><i class="fa-solid fa-plus"></i></div>
+                            <div><h3 style="margin:0;">Add New Storage</h3><small style="color:var(--text-light);">Register a new NFC tagged storage</small></div>
+                        </div>
+                        <form id="add-inventory-form">
+                            <div class="input-group">
+                                <label>Storage Name</label>
+                                <input type="text" id="inv-name" placeholder="e.g. Kitchen Fridge A" required>
+                            </div>
+                            <div class="input-group">
+                                <label>NFC Tag ID</label>
+                                <div class="input-with-scan">
+                                    <input type="text" id="inv-nfc-id" placeholder="Enter NFC tag ID" required>
+                                    <button type="button" class="btn btn-secondary" onclick="Scanner.startRegistrationScan()" style="width:auto;">
+                                        <i class="fa-solid fa-wifi"></i> Scan
+                                    </button>
+                                </div>
+                                <small>Tap Scan button to read NFC tag, or enter manually</small>
+                            </div>
+                            <div class="input-group">
+                                <label>Contents (Items)</label>
+                                <div id="add-items-container" style="max-height:150px;overflow-y:auto;margin-bottom:0.5rem;"></div>
+                                <div style="display:flex;gap:0.5rem;">
+                                    <input type="text" id="inv-new-item" placeholder="Add item (e.g. Milk)" style="flex:1;">
+                                    <button type="button" onclick="UI.addInventoryItem()" class="btn btn-secondary" style="width:auto;"><i class="fa-solid fa-plus"></i> Add</button>
+                                </div>
+                                <small>Add items one by one with + button</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Register Storage</button>
+                        </form>
+                    </div>
+                    <div class="card" style="border-top: 3px solid #10b981;">
+                        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                            <div style="width:40px;height:40px;background:linear-gradient(135deg,#10b981,#059669);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;"><i class="fa-solid fa-bolt"></i></div>
+                            <div><h3 style="margin:0;">Quick Actions</h3><small style="color:var(--text-light);">Common tasks at your fingertips</small></div>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="quick-action-btn" onclick="UI.showViewAllInventory()">
+                                <i class="fa-solid fa-list"></i><span>View All</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="UI.exportInventory()">
+                                <i class="fa-solid fa-download"></i><span>Export</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="UI.switchTab('admin', 'users')">
+                                <i class="fa-solid fa-user-plus"></i><span>Add Staff</span>
+                            </button>
+                        </div>
+                        <div class="stat-card mt-4" style="background:linear-gradient(135deg,#2563eb,#1e40af);color:white;">
+                            <div class="number" id="total-inventory" style="color:white;">-</div>
+                            <div class="label" style="color:rgba(255,255,255,0.8);">Registered Storage</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="border-top: 3px solid #6366f1;">
+                    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                        <div style="width:40px;height:40px;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;"><i class="fa-solid fa-box-archive"></i></div>
+                        <div><h3 style="margin:0;">Registered Storage</h3><small style="color:var(--text-light);">Your NFC tagged storage locations</small></div>
+                    </div>
+                    <div id="inventory-list">Loading...</div>
+                </div>
+            </div>
+
+            <div id="tab-admin-users" class="tab-content" style="display: none;">
+                <div class="desktop-grid">
+                    <div class="card" style="border-top: 3px solid #10b981;">
+                        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                            <div style="width:40px;height:40px;background:linear-gradient(135deg,#10b981,#059669);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;"><i class="fa-solid fa-user-plus"></i></div>
+                            <div><h3 style="margin:0;">Register Staff</h3><small style="color:var(--text-light);">Add a new staff member</small></div>
+                        </div>
+                        <div class="alert-box"><i class="fa-solid fa-circle-info"></i> Re-verify password to create staff.</div>
+                        <form id="add-user-form">
+                            <div class="input-group">
+                                <label>Staff Username</label>
+                                <input type="text" id="user-username" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Staff Email</label>
+                                <input type="email" id="user-email" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Staff Password</label>
+                                <input type="password" id="user-pass" required>
+                            </div>
+                            <div class="input-group" style="background:#f8fafc;padding:1rem;border-radius:8px;border:1px solid var(--border);">
+                                <label style="color:var(--primary);">Confirm Admin Password</label>
+                                <input type="password" id="admin-pass-confirm" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Staff</button>
+                        </form>
+                    </div>
+                    <div class="card" style="border-top: 3px solid #6366f1;">
+                        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                            <div style="width:40px;height:40px;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;"><i class="fa-solid fa-users"></i></div>
+                            <div><h3 style="margin:0;">Staff List</h3><small style="color:var(--text-light);">Your team members</small></div>
+                        </div>
+                        <div id="user-list">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-admin-reports" class="tab-content" style="display: none;">
+                <div class="card" style="border-top: 3px solid #ef4444;">
+                    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                        <div style="width:40px;height:40px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;"><i class="fa-solid fa-flag"></i></div>
+                        <div><h3 style="margin:0;">Incident Reports</h3><small style="color:var(--text-light);">Staff reported issues</small></div>
+                    </div>
+                    <div id="admin-reports-list">Loading...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-staff" class="view">
+            <div id="staff-platform-info"></div>
+            <div class="desktop-grid">
+                <div class="card scanner-zone">
+                    <div style="font-size: 4rem;color:#cbd5e1;margin-bottom:1rem;"><i class="fa-solid fa-wifi"></i></div>
+                    <h2>Scan Storage</h2>
+                    <p>Scan or enter Tag ID to view contents</p>
+                    <button id="btn-start-scan" class="btn btn-primary mt-4" onclick="Scanner.start()">
+                        <i class="fa-solid fa-wifi"></i> Start NFC Scan
+                    </button>
+                    <div class="divider">OR</div>
+                    <button class="btn btn-secondary" onclick="Scanner.showManualEntry()">
+                        <i class="fa-solid fa-keyboard"></i> Enter Tag ID Manually
+                    </button>
+                </div>
+                <div class="card">
+                    <h3 class="mb-2">Quick Actions</h3>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="Scanner.showManualEntry()">
+                            <i class="fa-solid fa-keyboard"></i><span>Manual Entry</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="UI.viewMyReports()">
+                            <i class="fa-solid fa-file-lines"></i><span>My Reports</span>
+                        </button>
+                    </div>
+                    <div class="alert-box mt-4"><i class="fa-solid fa-lightbulb"></i> Enter the Tag ID to view storage contents.</div>
+                </div>
+            </div>
+            <div id="result-card" class="staff-result-card" style="display:none;">
+                <div class="storage-icon"><i class="fa-solid fa-box-open"></i></div>
+                <h3 id="res-name">Storage</h3>
+                <span id="res-id" class="tag-badge">ID: ---</span>
+                
+                <div class="contents-box">
+                    <label style="display:block;margin-bottom:0.5rem;"><i class="fa-solid fa-list"></i> Contents</label>
+                    <div id="res-contents"></div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Report an Issue</label>
+                    <textarea id="report-msg" rows="2" placeholder="e.g. Need more milk..."></textarea>
+                </div>
+                <button class="btn btn-danger" onclick="Scanner.submitReport()"><i class="fa-solid fa-paper-plane"></i> Send Report</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width:550px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                <h3 style="margin:0;">Edit Storage</h3>
+                <button onclick="UI.closeEditModal()" class="btn btn-secondary btn-sm" style="width:auto;border:none;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="edit-inventory-form">
+                <input type="hidden" id="edit-id">
+                <div class="input-group"><label>Storage Name</label><input type="text" id="edit-name" required></div>
+                <div class="input-group"><label>Tag ID</label><input type="text" id="edit-nfc-id" required></div>
+                
+                <div class="input-group">
+                    <label>Contents (Items)</label>
+                    <div id="edit-items-container" style="max-height:200px;overflow-y:auto;margin-bottom:0.5rem;"></div>
+                    <div style="display:flex;gap:0.5rem;">
+                        <input type="text" id="edit-new-item" placeholder="Add new item..." style="flex:1;">
+                        <button type="button" onclick="UI.editAddItem()" class="btn btn-secondary" style="width:auto;"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                
+                <div style="display:flex;gap:1rem;margin-top:2rem;">
+                    <button type="button" onclick="UI.closeEditModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="register-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+                <div style="width:45px;height:45px;background:linear-gradient(135deg,#2563eb,#1e40af);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.2rem;"><i class="fa-solid fa-user-plus"></i></div>
+                <div><h3 style="margin:0;">Register Admin</h3><small style="color:var(--text-light);">Create a new administrator account</small></div>
+            </div>
+            <form id="register-form">
+                <div class="input-group"><label>Username</label><input type="text" id="register-username" required></div>
+                <div class="input-group"><label>Email</label><input type="email" id="register-email" required></div>
+                <div class="input-group"><label>Password</label><input type="password" id="register-pass" required></div>
+                <div class="input-group"><label>Confirm Password</label><input type="password" id="register-pass-confirm" required></div>
+                <div style="display:flex;gap:1rem;margin-top:2rem;">
+                    <button type="button" onclick="UI.closeRegisterModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="manual-entry-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                <h3 style="margin:0;">Enter Tag ID</h3>
+                <button onclick="UI.closeManualEntry()" class="btn btn-secondary btn-sm" style="width:auto;border:none;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="input-group">
+                <label>Tag ID</label>
+                <input type="text" id="manual-tag-id" placeholder="Enter NFC tag ID">
+            </div>
+            <button type="button" onclick="Scanner.processManualEntry()" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+
+    <div id="view-all-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width:600px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                <h3 style="margin:0;">All Storage</h3>
+                <button onclick="UI.closeViewAll()" class="btn btn-secondary btn-sm" style="width:auto;border:none;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="all-inventory-list" style="max-height:400px;overflow-y:auto;">Loading...</div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6upcz8n3OGqRGoazSS2jh0DxlWuqY-lw",
+            authDomain: "sims-nfc.firebaseapp.com",
+            projectId: "sims-nfc",
+            storageBucket: "sims-nfc.firebasestorage.app",
+            messagingSenderId: "275796414733",
+            appId: "1:275796414733:web:2c6e7b5c3fb1b39bdc6044"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        const Auth = {
+            currentUser: null,
+            userRole: null,
+            adminEmail: null,
+            username: null,
+
+            init: async () => {
+                const adminExists = await DB.checkIfAdminExists();
+                
+                onAuthStateChanged(auth, async (user) => {
+                    UI.toggleLoader(true);
+                    if (user) {
+                        Auth.currentUser = user;
+                        try {
+                            // Try to find user by email or UID
+                            const q = query(collection(db, "users"), where("email", "==", user.email));
+                            const snapshot = await getDocs(q);
+                            if (!snapshot.empty) {
+                                const userData = snapshot.docs[0].data();
+                                Auth.userRole = userData.role;
+                                Auth.adminEmail = userData.adminEmail || null;
+                                Auth.username = userData.username || user.email.split('@')[0];
+                            } else {
+                                // Try by UID
+                                const q2 = query(collection(db, "users"), where("uid", "==", user.uid));
+                                const snapshot2 = await getDocs(q2);
+                                if (!snapshot2.empty) {
+                                    const userData = snapshot2.docs[0].data();
+                                    Auth.userRole = userData.role;
+                                    Auth.adminEmail = userData.adminEmail || null;
+                                    Auth.username = userData.username || user.email.split('@')[0];
+                                } else {
+                                    Auth.userRole = 'admin';
+                                    Auth.username = user.email.split('@')[0];
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Role fetch error:', e);
+                            Auth.userRole = 'admin';
+                            Auth.username = user.email.split('@')[0];
+                        }
+                        UI.route();
+                        Auth.initInactivityTimer();
+                    } else {
+                        Auth.currentUser = null;
+                        Auth.userRole = null;
+                        Auth.adminEmail = null;
+                        Auth.username = null;
+                        UI.route();
+                    }
+                    UI.toggleLoader(false);
+                });
+
+                if (!adminExists) {
+                    UI.showView('view-setup');
+                    UI.toggleLoader(false);
+                }
+            },
+
+            login: async (email, password) => {
+                UI.toggleLoader(true);
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    UI.showToast('Welcome back!');
+                    Auth.initInactivityTimer();
+                } catch (error) {
+                    UI.showToast(error.message, "error");
+                } finally {
+                    UI.toggleLoader(false);
+                }
+            },
+
+            logout: async () => {
+                if (Auth.inactivityTimer) {
+                    clearTimeout(Auth.inactivityTimer);
+                    Auth.inactivityTimer = null;
+                }
+                UI.toggleLoader(true);
+                await signOut(auth);
+                UI.showToast('Logged out');
+                UI.toggleLoader(false);
+            },
+
+            inactivityTimeout: 15 * 60 * 1000,
+            inactivityTimer: null,
+
+            resetInactivityTimer: () => {
+                if (Auth.inactivityTimer) {
+                    clearTimeout(Auth.inactivityTimer);
+                }
+                if (Auth.currentUser) {
+                    Auth.inactivityTimer = setTimeout(() => {
+                        Auth.logout();
+                        UI.showToast('Session expired due to inactivity', 'error');
+                    }, Auth.inactivityTimeout);
+                }
+            },
+
+            initInactivityTimer: () => {
+                const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+                events.forEach(event => {
+                    document.addEventListener(event, Auth.resetInactivityTimer);
+                });
+                Auth.resetInactivityTimer();
+            }
+        };
+
+        const DB = {
+            checkIfAdminExists: async () => {
+                try {
+                    const q = query(collection(db, "users"), where("role", "==", "admin"));
+                    const snapshot = await getDocs(q);
+                    return !snapshot.empty;
+                } catch (e) {
+                    return false;
+                }
+            },
+
+            createDemoAccounts: async () => {
+                UI.toggleLoader(true);
+                const btn = document.getElementById('demo-btn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
+                
+                try {
+                    const demoAdminEmail = 'admin@demo.com';
+                    const demoAdminPass = 'demo123';
+                    const demoStaffEmail = 'staff@demo.com';
+                    const demoStaffPass = 'demo123';
+                    const demoAdminUsername = 'DemoAdmin';
+                    const demoStaffUsername = 'DemoStaff';
+
+                    const adminCredential = await createUserWithEmailAndPassword(auth, demoAdminEmail, demoAdminPass);
+                    await addDoc(collection(db, "users"), {
+                        email: demoAdminEmail,
+                        username: demoAdminUsername,
+                        role: 'admin',
+                        uid: adminCredential.user.uid,
+                        createdAt: new Date(),
+                        verified: true
+                    });
+
+                    await signOut(auth);
+
+                    const adminSignIn = await signInWithEmailAndPassword(auth, demoAdminEmail, demoAdminPass);
+                    
+                    const staffCredential = await createUserWithEmailAndPassword(auth, demoStaffEmail, demoStaffPass);
+                    await addDoc(collection(db, "users"), {
+                        email: demoStaffEmail,
+                        username: demoStaffUsername,
+                        role: 'staff',
+                        uid: staffCredential.user.uid,
+                        createdAt: new Date(),
+                        adminEmail: demoAdminEmail,
+                        verified: true
+                    });
+
+                    await signOut(auth);
+
+                    document.getElementById('demo-accounts').style.display = 'block';
+                    btn.style.display = 'none';
+                    UI.showToast('Demo accounts created!');
+                } catch (error) {
+                    if (error.message.includes('already in use')) {
+                        document.getElementById('demo-accounts').style.display = 'block';
+                        btn.style.display = 'none';
+                        UI.showToast('Demo accounts already exist!');
+                    } else {
+                        UI.showToast('Error: ' + error.message, 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-magic"></i> Create Demo Accounts';
+                    }
+                } finally {
+                    UI.toggleLoader(false);
+                }
+            },
+
+            createAdmin: async (email, password) => {
+                UI.toggleLoader(true);
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await addDoc(collection(db, "users"), { 
+                        email: email, 
+                        role: 'admin', 
+                        uid: userCredential.user.uid,
+                        createdAt: new Date() 
+                    });
+                    UI.showToast("System Initialized");
+                } catch (error) {
+                    throw error;
+                } finally {
+                    UI.toggleLoader(false);
+                }
+            },
+
+            getInventory: async (adminEmail = null) => {
+                const snapshot = await getDocs(collection(db, "inventory"));
+                let items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (adminEmail) {
+                    items = items.filter(item => item.adminEmail === adminEmail);
+                }
+                return items;
+            },
+
+            addInventory: async (item) => {
+                await addDoc(collection(db, "inventory"), item);
+            },
+
+            updateInventory: async (docId, data) => {
+                await updateDoc(doc(db, "inventory", docId), data);
+            },
+
+            deleteInventory: async (docId) => {
+                await deleteDoc(doc(db, "inventory", docId));
+            },
+
+            addStaffUser: async (staffUsername, staffEmail, staffPass, adminEmail, adminPass) => {
+                UI.toggleLoader(true);
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, staffEmail, staffPass);
+                    await addDoc(collection(db, "users"), { 
+                        username: staffUsername,
+                        email: staffEmail, 
+                        role: 'staff', 
+                        uid: userCredential.user.uid,
+                        createdAt: new Date(),
+                        adminEmail: adminEmail
+                    });
+                    await signOut(auth);
+                    await signInWithEmailAndPassword(auth, adminEmail, adminPass);
+                    UI.showToast("Staff created!");
+                    return true;
+                } catch (error) {
+                    try { await signInWithEmailAndPassword(auth, adminEmail, adminPass); } catch (e) {}
+                    UI.showToast(error.message, "error");
+                    return false;
+                } finally {
+                    UI.toggleLoader(false);
+                }
+            },
+
+            getStaffList: async (adminEmail = null) => {
+                const snapshot = await getDocs(query(collection(db, "users"), where("role", "==", "staff")));
+                let staff = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (adminEmail) {
+                    staff = staff.filter(s => s.adminEmail === adminEmail || !s.adminEmail);
+                }
+                return staff;
+            },
+
+            deleteStaff: async (docId) => {
+                await deleteDoc(doc(db, "users", docId));
+            },
+
+            getReports: async () => {
+                const snapshot = await getDocs(collection(db, "reports"));
+                return snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            },
+
+            getReportsByUser: async (email) => {
+                const snapshot = await getDocs(query(collection(db, "reports"), where("author", "==", email)));
+                return snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            },
+
+            addReport: async (report) => {
+                await addDoc(collection(db, "reports"), { ...report, timestamp: new Date().toISOString() });
+            },
+
+            clearReport: async (docId) => {
+                await deleteDoc(doc(db, "reports", docId));
+            }
+        };
+
+        const UI = {
+            addInventoryItems: [],
+            editItems: [],
+            toggleLoader: (show) => {
+                const loader = document.getElementById('global-loader');
+                loader.style.opacity = show ? '1' : '0';
+                setTimeout(() => { loader.style.display = show ? 'flex' : 'none'; }, 300);
+            },
+
+            showView: (viewId) => {
+                document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+                document.getElementById(viewId).classList.add('active');
+                if (viewId === 'view-admin') UI.showPlatformInfo();
+                else if (viewId === 'view-staff') UI.showStaffPlatformInfo();
+            },
+
+            showPlatformInfo: () => {
+                const el = document.getElementById('platform-info');
+                if (!el) return;
+                if (!isMobile) {
+                    el.innerHTML = '<div class="platform-banner desktop"><i class="fa-solid fa-desktop"></i><div><strong>Desktop Mode</strong><br>Use manual entry to register and scan tags.</div></div>';
+                } else {
+                    el.innerHTML = '';
+                }
+            },
+
+            showStaffPlatformInfo: () => {
+                const el = document.getElementById('staff-platform-info');
+                if (!el) return;
+                if (!isMobile) {
+                    el.innerHTML = '<div class="platform-banner desktop"><i class="fa-solid fa-desktop"></i><div><strong>Desktop Mode</strong><br>Use manual entry to scan items.</div></div>';
+                } else {
+                    el.innerHTML = '';
+                }
+            },
+
+            route: () => {
+                const header = document.getElementById('app-header');
+                if (Auth.currentUser) {
+                    header.style.display = 'flex';
+                    document.getElementById('header-username').innerText = Auth.username || Auth.currentUser.email.split('@')[0];
+                    document.getElementById('header-role').innerText = Auth.userRole.toUpperCase();
+                    document.getElementById('header-role').className = 'badge badge-' + Auth.userRole;
+                    if (Auth.userRole === 'admin') { UI.showView('view-admin'); UI.renderAdmin(); }
+                    else { UI.showView('view-staff'); }
+                } else {
+                    header.style.display = 'none';
+                    UI.showView('view-login');
+                }
+            },
+
+            switchTab: (role, tabName) => {
+                document.querySelectorAll('#view-' + role + ' .nav-item').forEach(el => el.classList.remove('active'));
+                event.target.classList.add('active');
+                document.querySelectorAll('#view-' + role + ' .tab-content').forEach(el => el.style.display = 'none');
+                document.getElementById('tab-' + role + '-' + tabName).style.display = 'block';
+                if (role === 'admin') UI.renderAdmin();
+            },
+
+            renderAdmin: async () => {
+                const invList = document.getElementById('inventory-list');
+                invList.innerHTML = '<div class="text-center" style="padding:2rem;color:var(--text-light);"><i class="fa-solid fa-spinner fa-spin"></i></div>';
+                
+                const invData = await DB.getInventory(Auth.currentUser.email);
+                document.getElementById('total-inventory').innerText = invData.length;
+                
+                if (invData.length === 0) {
+                    invList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-box-open"></i><h3>No Storage Registered</h3><p>Add your first NFC storage to get started</p></div>';
+                } else {
+                    invList.innerHTML = invData.map(item => {
+                        const items = UI.parseContents(item.contents);
+                        return '<div class="storage-card">' +
+                            '<div class="storage-card-header">' +
+                                '<div class="storage-card-title"><i class="fa-solid fa-box-archive"></i> ' + item.name + '</div>' +
+                                '<div class="storage-card-id"><i class="fa-solid fa-tag"></i> ' + item.nfcId + '</div>' +
+                            '</div>' +
+                            '<div class="storage-card-contents">' +
+                                (items.length > 0 ? items.map(i => '<span class="storage-item-tag"><i class="fa-solid fa-circle"></i> ' + i.name + '<span class="qty">' + i.qty + '</span></span>').join('') : '<span style="color:var(--text-light);font-size:0.85rem;">No items</span>') +
+                            '</div>' +
+                            '<div class="storage-card-actions">' +
+                                '<button onclick="UI.openEditModal(\'' + item.id + '\')" class="btn btn-secondary btn-sm"><i class="fa-solid fa-pen"></i> Edit</button>' +
+                                '<button onclick="if(confirm(\'Delete this storage?\')){DB.deleteInventory(\'' + item.id + '\');UI.renderAdmin();}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete</button>' +
+                            '</div>' +
+                        '</div>';
+                    }).join('');
+                }
+
+                const userList = document.getElementById('user-list');
+                const userData = await DB.getStaffList(Auth.currentUser.email);
+                if (userData.length === 0) userList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-users"></i><h3>No Staff</h3><p>Add staff members to help manage inventory</p></div>';
+                else {
+                    userList.innerHTML = userData.map(u => '<div class="staff-card"><div class="staff-card-info"><div class="staff-avatar">' + ((u.username || u.email).charAt(0).toUpperCase()) + '</div><div><div style="font-weight:600;">' + (u.username || u.email) + '</div><small style="color:var(--text-light);">' + u.email + '</small></div></div><button onclick="if(confirm(\'Remove this staff?\')){DB.deleteStaff(\'' + u.id + '\');UI.renderAdmin();}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button></div>').join('');
+                }
+
+                const reportList = document.getElementById('admin-reports-list');
+                const reportData = await DB.getReports();
+                if (reportData.length === 0) reportList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle"></i><h3>All Clear</h3><p>No incident reports from staff</p></div>';
+                else {
+                    reportList.innerHTML = reportData.map(r => '<div class="card" style="border-left:4px solid #ef4444;padding:1rem;margin-bottom:0.75rem;"><div style="display:flex;justify-content:space-between;align-items:center;"><strong style="color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> ' + r.storageName + '</strong><small style="color:var(--text-light);">' + new Date(r.timestamp).toLocaleDateString() + '</small></div><p style="margin:0.75rem 0;font-style:italic;">"' + r.message + '"</p><div style="font-size:0.8rem;color:var(--text-light);display:flex;justify-content:space-between;align-items:center;"><span><i class="fa-solid fa-user"></i> ' + r.author + '</span><button onclick="DB.clearReport(\'' + r.id + '\');UI.renderAdmin()" class="btn btn-sm btn-secondary">Mark Resolved</button></div></div>').join('');
+                }
+            },
+
+            openEditModal: async (id) => {
+                const items = await DB.getInventory(Auth.currentUser.email);
+                const item = items.find(i => i.id === id);
+                if (!item) return;
+                
+                document.getElementById('edit-id').value = item.id;
+                document.getElementById('edit-name').value = item.name;
+                document.getElementById('edit-nfc-id').value = item.nfcId;
+                
+                UI.editItems = UI.parseContents(item.contents);
+                UI.renderEditItems();
+                
+                document.getElementById('edit-modal').classList.add('open');
+            },
+
+            editItems: [],
+
+            parseContents: (contents) => {
+                if (!contents) return [];
+                return contents.split('\n').filter(line => line.trim()).map(line => {
+                    const match = line.match(/^(.+?):\s*(\d+)\s*$/);
+                    if (match) {
+                        return { name: match[1].trim(), qty: parseInt(match[2]) };
+                    }
+                    return { name: line.trim(), qty: 1 };
+                });
+            },
+
+            contentsFromItems: () => {
+                return UI.editItems.map(item => item.name + ': ' + item.qty).join('\n');
+            },
+
+            renderEditItems: () => {
+                const container = document.getElementById('edit-items-container');
+                if (UI.editItems.length === 0) {
+                    container.innerHTML = '<p style="color:var(--text-light);text-align:center;padding:1rem;">No items. Add items below.</p>';
+                    return;
+                }
+                container.innerHTML = UI.editItems.map((item, index) => 
+                    '<div class="item-row">' +
+                        '<span class="item-name">' + item.name + '</span>' +
+                        '<div class="item-qty">' +
+                            '<button type="button" class="qty-btn minus" onclick="UI.editQty(' + index + ', -1)"><i class="fa-solid fa-minus"></i></button>' +
+                            '<span style="min-width:30px;text-align:center;font-weight:600;">' + item.qty + '</span>' +
+                            '<button type="button" class="qty-btn" onclick="UI.editQty(' + index + ', 1)"><i class="fa-solid fa-plus"></i></button>' +
+                            '<button type="button" class="delete-btn" onclick="UI.editDelete(' + index + ')"><i class="fa-solid fa-trash"></i></button>' +
+                        '</div>' +
+                    '</div>'
+                ).join('');
+            },
+
+            editQty: (index, delta) => {
+                UI.editItems[index].qty += delta;
+                if (UI.editItems[index].qty < 1) UI.editItems[index].qty = 1;
+                UI.renderEditItems();
+            },
+
+            editDelete: (index) => {
+                UI.editItems.splice(index, 1);
+                UI.renderEditItems();
+            },
+
+            editAddItem: () => {
+                const input = document.getElementById('edit-new-item');
+                const name = input.value.trim();
+                if (!name) return;
+                
+                const existing = UI.editItems.find(i => i.name.toLowerCase() === name.toLowerCase());
+                if (existing) {
+                    existing.qty += 1;
+                } else {
+                    UI.editItems.push({ name: name, qty: 1 });
+                }
+                
+                input.value = '';
+                UI.renderEditItems();
+            },
+
+            closeEditModal: () => {
+                document.getElementById('edit-modal').classList.remove('open');
+                UI.editItems = [];
+            },
+
+            addInventoryItem: () => {
+                const input = document.getElementById('inv-new-item');
+                const name = input.value.trim();
+                if (!name) return;
+                
+                const existing = UI.addInventoryItems.find(i => i.name.toLowerCase() === name.toLowerCase());
+                if (existing) {
+                    existing.qty += 1;
+                } else {
+                    UI.addInventoryItems.push({ name: name, qty: 1 });
+                }
+                
+                input.value = '';
+                UI.renderAddInventoryItems();
+            },
+
+            renderAddInventoryItems: () => {
+                const container = document.getElementById('add-items-container');
+                if (UI.addInventoryItems.length === 0) {
+                    container.innerHTML = '<p style="color:var(--text-light);text-align:center;padding:0.5rem;">No items added yet</p>';
+                    return;
+                }
+                container.innerHTML = UI.addInventoryItems.map((item, index) => 
+                    '<div class="item-row">' +
+                        '<span class="item-name">' + item.name + '</span>' +
+                        '<div class="item-qty">' +
+                            '<button type="button" class="qty-btn minus" onclick="UI.addItemQty(' + index + ', -1)"><i class="fa-solid fa-minus"></i></button>' +
+                            '<span style="min-width:30px;text-align:center;font-weight:600;">' + item.qty + '</span>' +
+                            '<button type="button" class="qty-btn" onclick="UI.addItemQty(' + index + ', 1)"><i class="fa-solid fa-plus"></i></button>' +
+                            '<button type="button" class="delete-btn" onclick="UI.addItemDelete(' + index + ')"><i class="fa-solid fa-trash"></i></button>' +
+                        '</div>' +
+                    '</div>'
+                ).join('');
+            },
+
+            addItemQty: (index, delta) => {
+                UI.addInventoryItems[index].qty += delta;
+                if (UI.addInventoryItems[index].qty < 1) UI.addInventoryItems[index].qty = 1;
+                UI.renderAddInventoryItems();
+            },
+
+            addItemDelete: (index) => {
+                UI.addInventoryItems.splice(index, 1);
+                UI.renderAddInventoryItems();
+            },
+            showRegisterModal: () => document.getElementById('register-modal').classList.add('open'),
+            closeRegisterModal: () => { document.getElementById('register-modal').classList.remove('open'); document.getElementById('register-form').reset(); },
+            showManualEntry: () => document.getElementById('manual-entry-modal').classList.add('open'),
+            closeManualEntry: () => { document.getElementById('manual-entry-modal').classList.remove('open'); document.getElementById('manual-tag-id').value = ''; },
+
+            showViewAllInventory: async () => {
+                const items = await DB.getInventory(Auth.currentUser.email);
+                const container = document.getElementById('all-inventory-list');
+                if (items.length === 0) container.innerHTML = '<p style="text-align:center;color:var(--text-light);">No items.</p>';
+                else container.innerHTML = items.map(item => '<div class="list-item"><div class="list-info"><h4>' + item.name + '</h4><small>ID: ' + item.nfcId + '</small></div><button onclick="UI.copyTagId(\'' + item.nfcId + '\')" class="btn btn-secondary btn-sm"><i class="fa-regular fa-copy"></i></button></div>').join('');
+                document.getElementById('view-all-modal').classList.add('open');
+            },
+
+            closeViewAll: () => document.getElementById('view-all-modal').classList.remove('open'),
+            copyTagId: (id) => { navigator.clipboard.writeText(id); UI.showToast('Copied!'); },
+
+            exportInventory: async () => {
+                const items = await DB.getInventory(Auth.currentUser.email);
+                if (items.length === 0) { UI.showToast('No items', 'error'); return; }
+                let csv = 'Name,Tag ID,Contents\n';
+                items.forEach(item => { csv += '"' + item.name + '","' + item.nfcId + '","' + (item.contents || '').replace(/"/g, '""') + '"\n'; });
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'inventory.csv'; a.click();
+                UI.showToast('Exported!');
+            },
+
+            viewMyReports: async () => {
+                const reports = await DB.getReportsByUser(Auth.currentUser.email);
+                if (reports.length === 0) { UI.showToast('No reports', 'error'); return; }
+                let msg = 'Your Reports:\n\n';
+                reports.forEach(r => { msg += '• ' + r.storageName + ': ' + r.message + '\n'; });
+                alert(msg);
+            },
+
+            showResult: (item) => {
+                document.getElementById('res-name').innerText = item.name || 'Unknown Storage';
+                document.getElementById('res-id').innerText = 'Tag: ' + (item.nfcId || 'N/A');
+                
+                const contentsDiv = document.getElementById('res-contents');
+                if (!item.contents) {
+                    contentsDiv.innerHTML = '<p style="color:rgba(255,255,255,0.7);">No items listed</p>';
+                } else {
+                    const items = UI.parseContents(item.contents);
+                    contentsDiv.innerHTML = items.map(i => 
+                        '<div class="item-row" style="color:white;">' +
+                            '<span><i class="fa-solid fa-check-circle"></i> ' + i.name + '</span>' +
+                            '<span style="font-weight:600;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:10px;">x' + i.qty + '</span>' +
+                        '</div>'
+                    ).join('');
+                }
+                
+                document.getElementById('result-card').style.display = 'block';
+                document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
+            },
+
+            closeResult: () => document.getElementById('result-card').style.display = 'none',
+
+            showToast: (msg, type = 'success') => {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                const icon = type === 'error' ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-circle-check"></i>';
+                toast.className = 'toast ' + type;
+                toast.innerHTML = icon + ' <span>' + msg + '</span>';
+                container.appendChild(toast);
+                requestAnimationFrame(() => toast.classList.add('show'));
+                setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
+            }
+        };
+
+        const Scanner = {
+            currentItem: null,
+            registrationReader: null,
+
+            start: async () => {
+                if (!('NDEFReader' in window)) {
+                    UI.showToast('NFC not supported', 'error');
+                    setTimeout(() => Scanner.showManualEntry(), 1000);
+                    return;
+                }
+
+                const btn = document.getElementById('btn-start-scan');
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning...';
+                    btn.disabled = true;
+                }
+
+                try {
+                    const ndef = new NDEFReader();
+                    Scanner.registrationReader = ndef;
+                    await ndef.scan();
+                    UI.showToast('Scanning... hold tag near device');
+                    
+                    ndef.onreading = event => {
+                        const tagId = event.serialNumber;
+                        UI.showToast('Tag detected: ' + tagId);
+                        Scanner.stop();
+                        Scanner.handleScan(tagId);
+                    };
+                    
+                    ndef.onerror = error => {
+                        UI.showToast('NFC Error: ' + error.message, 'error');
+                        Scanner.stop();
+                    };
+                } catch (error) {
+                    UI.showToast('NFC Error: ' + error.message, 'error');
+                    Scanner.stop();
+                    setTimeout(() => Scanner.showManualEntry(), 1000);
+                }
+            },
+
+            stop: () => {
+                const btn = document.getElementById('btn-start-scan');
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-barcode"></i> Start Scan';
+                    btn.disabled = false;
+                }
+                if (Scanner.registrationReader) {
+                    try {
+                        Scanner.registrationReader.cancel();
+                    } catch (e) {}
+                    Scanner.registrationReader = null;
+                }
+            },
+
+            startRegistrationScan: async () => {
+                const input = document.getElementById('inv-nfc-id');
+                
+                if (!('NDEFReader' in window)) {
+                    UI.showToast('NFC not supported on this device', 'error');
+                    setTimeout(() => input.focus(), 1000);
+                    return;
+                }
+
+                const btn = document.querySelector('#add-inventory-form button[onclick="Scanner.startRegistrationScan()"]');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning...';
+                    input.placeholder = 'Waiting for tag...';
+                }
+
+                try {
+                    const ndef = new NDEFReader();
+                    Scanner.registrationReader = ndef;
+                    await ndef.scan();
+                    
+                    ndef.onreading = event => {
+                        const tagId = event.serialNumber;
+                        input.value = tagId;
+                        UI.showToast('Tag ID: ' + tagId);
+                        
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa-solid fa-wifi"></i> Scan';
+                        }
+                        input.placeholder = 'Enter NFC tag ID';
+                        Scanner.registrationReader = null;
+                    };
+                } catch (error) {
+                    UI.showToast('NFC Error: ' + error.message, 'error');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-wifi"></i> Scan';
+                    }
+                    input.placeholder = 'Enter NFC tag ID';
+                    Scanner.registrationReader = null;
+                }
+            },
+
+            showManualEntry: () => document.getElementById('manual-entry-modal').classList.add('open'),
+
+            processManualEntry: () => {
+                const tagId = document.getElementById('manual-tag-id').value.trim();
+                if (!tagId) { UI.showToast('Enter Tag ID', 'error'); return; }
+                UI.closeManualEntry();
+                Scanner.handleScan(tagId);
+            },
+
+            handleScan: async (nfcId) => {
+                try {
+                    UI.showToast('Looking up tag: ' + nfcId);
+                    let adminEmail = null;
+                    if (Auth.userRole === 'staff') {
+                        adminEmail = Auth.adminEmail;
+                    } else if (Auth.userRole === 'admin') {
+                        adminEmail = Auth.currentUser.email;
+                    }
+                    const items = await DB.getInventory(adminEmail);
+                    console.log('Looking for:', nfcId);
+                    console.log('Available items:', items);
+                    
+                    const item = items.find(i => i.nfcId && i.nfcId.toLowerCase() === nfcId.toLowerCase());
+                    
+                    if (item) {
+                        Scanner.currentItem = item;
+                        UI.showResult(item);
+                        UI.showToast('Found: ' + item.name);
+                    } else {
+                        UI.showToast('Unknown Tag: ' + nfcId, 'error');
+                    }
+                } catch (error) {
+                    console.error('handleScan error:', error);
+                    UI.showToast('Error looking up tag', 'error');
+                }
+            },
+
+            submitReport: async () => {
+                const msg = document.getElementById('report-msg').value;
+                if (!msg) { UI.showToast('Enter message', 'error'); return; }
+                UI.toggleLoader(true);
+                try {
+                    await DB.addReport({ storageName: Scanner.currentItem.name, storageId: Scanner.currentItem.nfcId, message: msg, author: Auth.currentUser.email });
+                    UI.showToast('Report sent!');
+                    document.getElementById('report-msg').value = '';
+                    UI.closeResult();
+                } catch (e) { UI.showToast('Failed', 'error'); }
+                finally { UI.toggleLoader(false); }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.init();
+
+            document.getElementById('setup-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('setup-email').value;
+                const username = document.getElementById('setup-username').value;
+                const pass = document.getElementById('setup-pass').value;
+                UI.toggleLoader(true);
+                try { 
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    
+                    await addDoc(collection(db, "users"), { 
+                        email: email,
+                        username: username,
+                        role: 'admin', 
+                        uid: userCredential.user.uid,
+                        createdAt: new Date()
+                    });
+                    await signOut(auth);
+                    UI.showToast('System initialized! You can now login.');
+                    UI.showView('view-login');
+                }
+                catch (error) { UI.showToast(error.message, 'error'); }
+                finally { UI.toggleLoader(false); }
+            });
+
+            document.getElementById('login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                Auth.login(document.getElementById('login-email').value, document.getElementById('login-password').value);
+            });
+
+            document.getElementById('register-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('register-username').value;
+                const email = document.getElementById('register-email').value;
+                const pass = document.getElementById('register-pass').value;
+                const passConfirm = document.getElementById('register-pass-confirm').value;
+                
+                if (pass !== passConfirm) { UI.showToast('Passwords mismatch', 'error'); return; }
+                if (pass.length < 6) { UI.showToast('Password must be at least 6 characters', 'error'); return; }
+                
+                UI.toggleLoader(true);
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    await addDoc(collection(db, "users"), { 
+                        email: email, 
+                        username: username,
+                        role: 'admin', 
+                        uid: userCredential.user.uid,
+                        createdAt: new Date()
+                    });
+                    await signOut(auth);
+                    UI.showToast('Admin account created! You can now login.');
+                    UI.closeRegisterModal();
+                } catch (error) { 
+                    console.error('Register error:', error);
+                    UI.showToast(error.message, 'error'); 
+                }
+                finally { UI.toggleLoader(false); }
+            });
+
+            document.getElementById('add-inventory-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                UI.toggleLoader(true);
+                try {
+                    const contents = UI.addInventoryItems.map(item => item.name + ': ' + item.qty).join('\n');
+                    await DB.addInventory({ 
+                        name: document.getElementById('inv-name').value, 
+                        nfcId: document.getElementById('inv-nfc-id').value, 
+                        contents: contents,
+                        adminEmail: Auth.currentUser.email
+                    });
+                    UI.showToast('Registered!');
+                    e.target.reset();
+                    UI.addInventoryItems = [];
+                    UI.renderAddInventoryItems();
+                    UI.renderAdmin();
+                } catch (error) { UI.showToast(error.message, 'error'); }
+                finally { UI.toggleLoader(false); }
+            });
+
+            document.getElementById('add-user-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const success = await DB.addStaffUser(
+                    document.getElementById('user-username').value,
+                    document.getElementById('user-email').value, 
+                    document.getElementById('user-pass').value, 
+                    Auth.currentUser.email, 
+                    document.getElementById('admin-pass-confirm').value
+                );
+                if (success) { e.target.reset(); UI.renderAdmin(); }
+            });
+
+            document.getElementById('edit-inventory-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                UI.toggleLoader(true);
+                try {
+                    const contents = UI.contentsFromItems();
+                    await DB.updateInventory(document.getElementById('edit-id').value, { 
+                        name: document.getElementById('edit-name').value, 
+                        nfcId: document.getElementById('edit-nfc-id').value, 
+                        contents: contents 
+                    });
+                    UI.showToast('Updated!');
+                    UI.closeEditModal();
+                    UI.renderAdmin();
+                } catch (error) { UI.showToast(error.message, 'error'); }
+                finally { UI.toggleLoader(false); }
+            });
+
+            document.getElementById('manual-tag-id').addEventListener('keypress', (e) => { if (e.key === 'Enter') Scanner.processManualEntry(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open')); });
+        });
+
+        window.Auth = Auth;
+        window.UI = UI;
+        window.Scanner = Scanner;
+        window.DB = DB;
+    </script>
+</body>
+</html>
