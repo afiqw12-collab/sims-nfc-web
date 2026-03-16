@@ -4,236 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#2563eb">
-    <meta name="description" content="Smart Inventory Management System">
-    <link rel="manifest" href="manifest.json">
     <title>Smart Inventory System</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --secondary: #64748b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --text-main: #0f172a;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --radius: 12px;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-            --header-height: 64px;
-        }
-
-        [data-theme="dark"] {
-            --background: #0f172a;
-            --surface: #1e293b;
-            --text-main: #f1f5f9;
-            --text-light: #94a3b8;
-            --border: #334155;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--background); 
-            color: var(--text-main); 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            padding-top: var(--header-height);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .btn { padding: 0.75rem 1.25rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; }
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        :root { --primary: #2563eb; --primary-dark: #1e40af; --secondary: #64748b; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --background: #f8fafc; --surface: #ffffff; --text-main: #0f172a; --text-light: #64748b; --border: #e2e8f0; --radius: 12px; --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); --header-height: 64px; }
+        [data-theme="dark"] { --background: #0f172a; --surface: #1e293b; --text-main: #f1f5f9; --text-light: #94a3b8; --border: #334155; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--background); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; padding-top: var(--header-height); transition: background 0.3s, color 0.3s; }
+        .btn { padding: 0.75rem 1.25rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; }
+        .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-dark); }
         .btn-danger { background: var(--danger); color: white; }
         .btn-secondary { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); }
-        .btn-secondary:hover { background: var(--background); }
+        .btn-secondary:hover { background: var(--border); }
         .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; width: auto; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 8px; }
-
-        .card { background: var(--surface); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); margin-bottom: 1rem; border: 1px solid var(--border); transition: background-color 0.3s; }
-
+        .card { background: var(--surface); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); margin-bottom: 1rem; border: 1px solid var(--border); }
         .input-group { margin-bottom: 1.25rem; text-align: left; }
-        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--text-main); }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; background: var(--surface); color: var(--text-main); }
-        .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: var(--surface); color: var(--text-main); }
         .input-with-scan { display: flex; gap: 0.5rem; }
         .input-with-scan input { flex: 1; }
-        .item-row { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: var(--background); border-radius: 8px; margin-bottom: 0.5rem; }
-        .item-row .qty-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: var(--primary); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .item-row .qty-btn.minus { background: var(--danger); }
-        .item-row .delete-btn { color: var(--danger); background: none; border: none; cursor: pointer; padding: 4px; }
-
         .badge { padding: 0.25rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
         .badge-admin { background: #fee2e2; color: #991b1b; }
         .badge-staff { background: #e0f2fe; color: #0369a1; }
-        .badge-warning { background: #fef3c7; color: #92400e; }
-        .badge-success { background: #dcfce7; color: #166534; }
-
-        header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 1.5rem; height: var(--header-height); display: none; justify-content: space-between; align-items: center; position: fixed; top: 0; width: 100%; z-index: 50; transition: background-color 0.3s; }
-        
-        .logo { font-weight: 800; font-size: 1.25rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; }
-        .logo i { color: var(--primary); }
-        
+        header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 1.5rem; height: var(--header-height); display: none; justify-content: space-between; align-items: center; position: fixed; top: 0; width: 100%; z-index: 50; }
+        .logo { font-weight: 800; font-size: 1.25rem; }
+        .logo i { color: var(--primary); margin-right: 0.5rem; }
         main { flex: 1; padding: 1.5rem; max-width: 1200px; margin: 0 auto; width: 100%; }
-
-        .view { display: none; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .view { display: none; }
         .view.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .nav-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
-        .nav-item { padding: 0.6rem 1.2rem; border-radius: 99px; cursor: pointer; font-weight: 500; white-space: nowrap; background: transparent; color: var(--text-light); border: 1px solid transparent; transition: all 0.2s; }
-        .nav-item:hover { background: var(--border); }
+        .nav-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; }
+        .nav-item { padding: 0.6rem 1.2rem; border-radius: 99px; cursor: pointer; font-weight: 500; white-space: nowrap; background: transparent; color: var(--text-light); }
         .nav-item.active { background: var(--text-main); color: white; }
-
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--border); }
-        .list-info h4 { font-size: 1rem; margin-bottom: 0.25rem; }
-        .list-info small { color: var(--text-light); font-size: 0.85rem; }
         .list-actions { display: flex; gap: 0.5rem; }
-
-        #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--surface); color: var(--text-main); padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); font-size: 0.9rem; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); }
+        #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; width: 90%; max-width: 400px; }
+        .toast { background: var(--surface); color: var(--text-main); padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); margin-bottom: 10px; border: 1px solid var(--border); }
         .toast.error { border-color: var(--danger); color: var(--danger); }
         .toast.success { border-color: var(--success); color: var(--success); }
-        .toast.warning { border-color: var(--warning); color: var(--warning); }
-
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 100; }
         .modal-overlay.open { display: flex; }
-        .modal-content { background: var(--surface); padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
-
-        #global-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--background); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .modal-content { background: var(--surface); padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        #global-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--background); z-index: 9999; display: flex; justify-content: center; align-items: center; }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
         .hidden { display: none !important; }
-        .text-center { text-align: center; }
         .mb-2 { margin-bottom: 0.5rem; }
         .mb-4 { margin-bottom: 2rem; }
         .mt-4 { margin-top: 1.5rem; }
-
         .desktop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .quick-action-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+        .quick-action-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; cursor: pointer; text-align: center; }
         .quick-action-btn:hover { border-color: var(--primary); }
-        .quick-action-btn i { font-size: 1.25rem; color: var(--primary); }
-
+        .quick-action-btn i { font-size: 1.25rem; color: var(--primary); margin-bottom: 0.5rem; display: block; }
         .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; text-align: center; }
         .stat-card .number { font-size: 2rem; font-weight: 700; color: var(--primary); }
         .stat-card .label { font-size: 0.85rem; color: var(--text-light); }
-
-        .alert-box { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; display: flex; gap: 0.5rem; }
-        [data-theme="dark"] .alert-box { background: #422006; border-color: #78350f; color: #fbbf24; }
-
+        .item-row { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: var(--background); border-radius: 8px; margin-bottom: 0.5rem; }
+        .item-row .qty-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: var(--primary); color: white; cursor: pointer; }
+        .item-row .qty-btn.minus { background: var(--danger); }
+        .item-row .delete-btn { color: var(--danger); background: none; border: none; cursor: pointer; }
         .search-box { position: relative; margin-bottom: 1rem; }
         .search-box input { padding-left: 2.5rem; }
         .search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
-
-        .low-stock { border-left: 4px solid var(--warning); }
         .location-tag { background: var(--primary); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 8px; }
-
+        .alert-box { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        [data-theme="dark"] .alert-box { background: #422006; border-color: #78350f; color: #fbbf24; }
         .staff-result-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px; padding: 1.5rem; margin-top: 1.5rem; }
         .staff-result-card .contents-box { background: rgba(255,255,255,0.15); border-radius: 12px; padding: 1rem; margin: 1rem 0; }
-        .staff-result-card .item-row { background: rgba(255,255,255,0.2); color: white; }
         .staff-result-card textarea { background: rgba(255,255,255,0.9); border: none; }
         .staff-result-card .btn-danger { background: white; color: #764ba2; }
-
-        .platform-banner { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 0.75rem; }
-        .platform-banner.ios { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; }
-        .platform-banner.desktop { background: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; }
-
-        .theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--text-main); padding: 0.5rem; }
-        
-        .activity-item { padding: 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-        .activity-item:last-child { border-bottom: none; }
-        .activity-time { color: var(--text-light); font-size: 0.75rem; }
-
-        .storage-image { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; background: var(--background); }
         .image-upload-btn { width: 100%; height: 150px; border: 2px dashed var(--border); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--text-light); }
         .image-upload-btn:hover { border-color: var(--primary); color: var(--primary); }
-
-        .barcode-scanner { width: 100%; height: 200px; background: #000; border-radius: 8px; position: relative; overflow: hidden; }
-        .barcode-scanner video { width: 100%; height: 100%; object-fit: cover; }
-
-        @media (max-width: 768px) {
-            .desktop-grid { grid-template-columns: 1fr; }
-            .quick-actions { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 600px) {
-            .list-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            .list-actions { width: 100%; justify-content: flex-end; }
-            .quick-actions { grid-template-columns: 1fr; }
-        }
+        .storage-image { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; }
+        .theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--text-main); padding: 0.5rem; }
+        .activity-item { padding: 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+        .activity-time { color: var(--text-light); font-size: 0.75rem; }
+        @media (max-width: 768px) { .desktop-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { .list-item { flex-direction: column; align-items: flex-start; gap: 1rem; } .list-actions { width: 100%; justify-content: flex-end; } }
     </style>
 </head>
 <body>
-
-    <div id="global-loader">
-        <div class="spinner"></div>
-        <p class="mt-4" style="color:var(--text-light); font-weight:500;">Loading System...</p>
-    </div>
-
+    <div id="global-loader"><div class="spinner"></div></div>
     <header id="app-header">
-        <div class="logo">
-            <i class="fa-solid fa-boxes-stacked"></i>
-            <span>SIMS</span>
-        </div>
+        <div class="logo"><i class="fa-solid fa-boxes-stacked"></i><span>SIMS</span></div>
         <div style="display:flex;align-items:center;gap:0.5rem;">
-            <button class="theme-toggle" onclick="UI.toggleTheme()" title="Toggle Dark Mode">
-                <i class="fa-solid fa-moon" id="theme-icon"></i>
-            </button>
-            <button onclick="Auth.logout()" class="btn btn-secondary btn-sm" title="Logout">
-                <i class="fa-solid fa-right-from-bracket"></i>
-            </button>
+            <button class="theme-toggle" onclick="Theme.toggle()"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
+            <button onclick="Auth.logout()" class="btn btn-secondary btn-sm"><i class="fa-solid fa-right-from-bracket"></i></button>
         </div>
     </header>
-
     <main>
-        <!-- SETUP VIEW -->
         <section id="view-setup" class="view">
-            <div class="card text-center" style="margin-top: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
-                <div style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"><i class="fa-solid fa-rocket"></i></div>
+            <div class="card text-center" style="margin-top:2rem;max-width:500px;margin-left:auto;margin-right:auto;">
+                <div style="font-size:3rem;color:var(--primary);margin-bottom:1rem;"><i class="fa-solid fa-rocket"></i></div>
                 <h2>System Setup</h2>
                 <p>Create your main Administrator account.</p>
-                <form id="setup-form" style="text-align: left; margin-top: 1.5rem;">
-                    <div class="input-group"><label>Admin Email</label><input type="email" id="setup-email" placeholder="admin@company.com" required></div>
-                    <div class="input-group"><label>Password</label><input type="password" id="setup-pass" placeholder="••••••••" required></div>
-                    <button type="submit" class="btn btn-primary">Initialize System</button>
+                <form id="setup-form" style="text-align:left;margin-top:1.5rem;">
+                    <div class="input-group"><label>Admin Email</label><input type="email" id="setup-email" required></div>
+                    <div class="input-group"><label>Password</label><input type="password" id="setup-pass" required></div>
+                    <button type="submit" class="btn btn-primary">Initialize</button>
                 </form>
             </div>
         </section>
-
-        <!-- LOGIN VIEW -->
         <section id="view-login" class="view">
-            <div class="desktop-grid" style="margin-top: 2rem;">
-                <div class="card text-center" style="margin-top: 2rem;">
-                    <div style="font-size: 3rem; color: var(--text-main); margin-bottom: 1rem;"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="desktop-grid" style="margin-top:2rem;">
+                <div class="card text-center" style="margin-top:2rem;">
+                    <div style="font-size:3rem;color:var(--text-main);margin-bottom:1rem;"><i class="fa-solid fa-layer-group"></i></div>
                     <h2>Smart Inventory</h2>
-                    <p style="color: var(--text-light); margin-bottom: 2rem;">Sign in to access your dashboard.</p>
+                    <p style="color:var(--text-light);margin-bottom:2rem;">Sign in to access your dashboard.</p>
                     <form id="login-form">
                         <div class="input-group"><input type="email" id="login-email" placeholder="Email Address" required></div>
                         <div class="input-group"><input type="password" id="login-password" placeholder="Password" required></div>
-                        <label style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;font-size:0.9rem;width:fit-content;">
-                            <input type="checkbox" id="remember-me"> Remember Me
-                        </label>
+                        <label style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;width:fit-content;"><input type="checkbox" id="remember-me"> Remember Me</label>
                         <button type="submit" class="btn btn-primary">Sign In</button>
                     </form>
-                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
-                        <p style="margin-bottom: 0.75rem; color: var(--text-light); font-size: 0.9rem;">Don't have an account?</p>
+                    <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+                        <p style="margin-bottom:0.75rem;color:var(--text-light)">Don't have an account?</p>
                         <button type="button" onclick="UI.showRegisterModal()" class="btn btn-secondary"><i class="fa-solid fa-user-plus"></i> Register Admin</button>
                     </div>
                 </div>
-                <div class="card" style="margin-top: 2rem;">
+                <div class="card" style="margin-top:2rem;">
                     <h3 class="mb-4"><i class="fa-solid fa-info-circle"></i> How It Works</h3>
                     <div class="list-item"><div class="list-info"><h4><i class="fa-solid fa-user-shield"></i> Admin</h4><small>Manage inventory & staff</small></div></div>
                     <div class="list-item"><div class="list-info"><h4><i class="fa-solid fa-users"></i> Staff</h4><small>Scan & report issues</small></div></div>
@@ -242,286 +134,168 @@
                 </div>
             </div>
         </section>
-
-        <!-- ADMIN DASHBOARD -->
         <section id="view-admin" class="view">
             <div class="nav-tabs">
-                <div class="nav-item active" onclick="UI.switchTab('admin', 'dashboard')">Dashboard</div>
-                <div class="nav-item" onclick="UI.switchTab('admin', 'inventory')">Inventory</div>
-                <div class="nav-item" onclick="UI.switchTab('admin', 'users')">Staff</div>
-                <div class="nav-item" onclick="UI.switchTab('admin', 'reports')">Reports</div>
-                <div class="nav-item" onclick="UI.switchTab('admin', 'activity')">Activity</div>
+                <div class="nav-item active" onclick="UI.switchTab('admin','dashboard')">Dashboard</div>
+                <div class="nav-item" onclick="UI.switchTab('admin','inventory')">Inventory</div>
+                <div class="nav-item" onclick="UI.switchTab('admin','users')">Staff</div>
+                <div class="nav-item" onclick="UI.switchTab('admin','reports')">Reports</div>
             </div>
-
-            <!-- Dashboard Tab -->
             <div id="tab-admin-dashboard" class="tab-content">
                 <div class="desktop-grid mb-4">
                     <div class="stat-card"><div class="number" id="stat-total">0</div><div class="label">Total Storage</div></div>
                     <div class="stat-card"><div class="number" id="stat-staff">0</div><div class="label">Staff Members</div></div>
-                    <div class="stat-card"><div class="number" id="stat-reports">0</div><div class="label">Pending Reports</div></div>
-                    <div class="stat-card"><div class="number" id="stat-low">0</div><div class="label">Low Stock Items</div></div>
+                    <div class="stat-card"><div class="number" id="stat-reports">0</div><div class="label">Reports</div></div>
+                    <div class="stat-card"><div class="number" id="stat-alerts">0</div><div class="label">Alerts</div></div>
                 </div>
                 <div class="desktop-grid">
                     <div class="card">
                         <h3 class="mb-2">Quick Actions</h3>
                         <div class="quick-actions">
-                            <button class="quick-action-btn" onclick="UI.switchTab('admin', 'inventory')"><i class="fa-solid fa-plus"></i><span>Add Storage</span></button>
-                            <button class="quick-action-btn" onclick="UI.showViewAllInventory()"><i class="fa-solid fa-list"></i><span>View All</span></button>
-                            <button class="quick-action-btn" onclick="UI.exportInventory()"><i class="fa-solid fa-download"></i><span>Export</span></button>
+                            <button class="quick-action-btn" onclick="UI.switchTab('admin','inventory')"><i class="fa-solid fa-plus"></i><span>Add Storage</span></button>
+                            <button class="quick-action-btn" onclick="UI.showViewAll()"><i class="fa-solid fa-list"></i><span>View All</span></button>
+                            <button class="quick-action-btn" onclick="UI.exportData()"><i class="fa-solid fa-download"></i><span>Export</span></button>
                             <button class="quick-action-btn" onclick="document.getElementById('import-file').click()"><i class="fa-solid fa-upload"></i><span>Import</span></button>
-                            <input type="file" id="import-file" accept=".csv" style="display:none" onchange="UI.importInventory(this)">
+                            <input type="file" id="import-file" accept=".csv" style="display:none" onchange="UI.importData(this)">
                         </div>
                     </div>
-                    <div class="card">
-                        <h3 class="mb-2">Recent Alerts</h3>
-                        <div id="alerts-list"></div>
-                    </div>
+                    <div class="card"><h3 class="mb-2">Recent Activity</h3><div id="activity-list"></div></div>
                 </div>
             </div>
-
-            <!-- Inventory Tab -->
-            <div id="tab-admin-inventory" class="tab-content" style="display: none;">
-                <div class="search-box">
-                    <i class="fa-solid fa-search"></i>
-                    <input type="text" id="search-inventory" placeholder="Search inventory..." onkeyup="UI.searchInventory()">
-                </div>
-                <div class="platform-banner desktop" id="platform-info"></div>
+            <div id="tab-admin-inventory" class="tab-content" style="display:none;">
+                <div class="search-box"><i class="fa-solid fa-search"></i><input type="text" id="search-input" placeholder="Search..." onkeyup="UI.search(this.value)"></div>
                 <div class="desktop-grid">
                     <div class="card">
-                        <h3 class="mb-2">Add New Storage</h3>
-                        <form id="add-inventory-form">
+                        <h3 class="mb-2">Add Storage</h3>
+                        <form id="add-form">
+                            <div class="input-group"><label>Name</label><input type="text" id="inv-name" required></div>
+                            <div class="input-group"><label>Location</label><select id="inv-location"><option>Kitchen</option><option>Office</option><option>Storage</option><option>Garage</option><option>Other</option></select></div>
                             <div class="input-group">
-                                <label>Storage Name</label>
-                                <input type="text" id="inv-name" placeholder="e.g. Kitchen Fridge" required>
-                            </div>
-                            <div class="input-group">
-                                <label>Location/Category</label>
-                                <select id="inv-location">
-                                    <option value="Kitchen">Kitchen</option>
-                                    <option value="Office">Office</option>
-                                    <option value="Storage Room">Storage Room</option>
-                                    <option value="Garage">Garage</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>NFC Tag ID</label>
-                                <div class="input-with-scan">
-                                    <input type="text" id="inv-nfc-id" placeholder="Enter NFC tag ID" required>
-                                    <button type="button" class="btn btn-secondary" onclick="Scanner.startRegistrationScan()" style="width:auto;"><i class="fa-solid fa-wifi"></i> Scan</button>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label>Photo (Optional)</label>
-                                <div class="image-upload-btn" onclick="document.getElementById('inv-image').click()">
-                                    <i class="fa-solid fa-camera" style="font-size:2rem;"></i>
-                                    <span>Tap to add photo</span>
-                                </div>
-                                <input type="file" id="inv-image" accept="image/*" style="display:none" onchange="UI.previewImage(this, 'inv-image-preview')">
-                                <img id="inv-image-preview" class="storage-image hidden" style="margin-top:0.5rem;">
+                                <label>Tag ID</label>
+                                <div class="input-with-scan"><input type="text" id="inv-nfc-id" required><button type="button" class="btn btn-secondary" onclick="Scanner.scanTag()" style="width:auto;"><i class="fa-solid fa-wifi"></i></button></div>
                             </div>
                             <div class="input-group">
                                 <label>Contents</label>
-                                <div id="add-items-container" style="max-height:150px;overflow-y:auto;margin-bottom:0.5rem;"></div>
-                                <div style="display:flex;gap:0.5rem;">
-                                    <input type="text" id="inv-new-item" placeholder="Add item" style="flex:1;">
-                                    <button type="button" onclick="UI.addInventoryItem()" class="btn btn-secondary" style="width:auto;"><i class="fa-solid fa-plus"></i></button>
-                                </div>
+                                <div id="items-list"></div>
+                                <div style="display:flex;gap:0.5rem;margin-top:0.5rem;"><input type="text" id="new-item" placeholder="Add item"><button type="button" class="btn btn-secondary" onclick="UI.addItem()" style="width:auto;"><i class="fa-solid fa-plus"></i></button></div>
                             </div>
                             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Register</button>
                         </form>
                     </div>
-                    <div class="card">
-                        <h3 class="mb-2">Registered Storage</h3>
-                        <div id="inventory-list">Loading...</div>
-                    </div>
+                    <div class="card"><h3 class="mb-2">Storage List</h3><div id="inventory-list"></div></div>
                 </div>
             </div>
-
-            <!-- Staff Tab -->
-            <div id="tab-admin-users" class="tab-content" style="display: none;">
+            <div id="tab-admin-users" class="tab-content" style="display:none;">
                 <div class="desktop-grid">
                     <div class="card">
-                        <h3 class="mb-2">Register Staff</h3>
-                        <div class="alert-box"><i class="fa-solid fa-circle-info"></i> Re-verify password to create staff.</div>
-                        <form id="add-user-form">
-                            <div class="input-group"><label>Staff Email</label><input type="email" id="user-email" required></div>
-                            <div class="input-group"><label>Password</label><input type="password" id="user-pass" required></div>
-                            <div class="input-group" style="background:var(--background);padding:1rem;border-radius:8px;border:1px solid var(--border);">
-                                <label style="color:var(--primary);">Confirm Admin Password</label>
-                                <input type="password" id="admin-pass-confirm" required>
-                            </div>
+                        <h3 class="mb-2">Add Staff</h3>
+                        <div class="alert-box"><i class="fa-solid fa-circle-info"></i> Re-verify password.</div>
+                        <form id="staff-form">
+                            <div class="input-group"><label>Email</label><input type="email" id="staff-email" required></div>
+                            <div class="input-group"><label>Password</label><input type="password" id="staff-pass" required></div>
+                            <div class="input-group"><label>Admin Password</label><input type="password" id="admin-pass" required></div>
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>
                     </div>
-                    <div class="card"><h3 class="mb-2">Staff List</h3><div id="user-list">Loading...</div></div>
+                    <div class="card"><h3 class="mb-2">Staff List</h3><div id="staff-list"></div></div>
                 </div>
             </div>
-
-            <!-- Reports Tab -->
-            <div id="tab-admin-reports" class="tab-content" style="display: none;">
-                <div class="card"><h3>Incident Reports</h3><div id="admin-reports-list">Loading...</div></div>
-            </div>
-
-            <!-- Activity Tab -->
-            <div id="tab-admin-activity" class="tab-content" style="display: none;">
-                <div class="card"><h3>Activity Log</h3><div id="activity-list">Loading...</div></div>
+            <div id="tab-admin-reports" class="tab-content" style="display:none;">
+                <div class="card"><h3>Reports</h3><div id="reports-list"></div></div>
             </div>
         </section>
-
-        <!-- STAFF DASHBOARD -->
         <section id="view-staff" class="view">
-            <div id="staff-platform-info"></div>
             <div class="desktop-grid">
-                <div class="card scanner-zone">
-                    <div style="font-size: 4rem;color:#cbd5e1;margin-bottom:1rem;"><i class="fa-solid fa-wifi"></i></div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:4rem;color:var(--text-light);margin-bottom:1rem;"><i class="fa-solid fa-wifi"></i></div>
                     <h2>Scan Storage</h2>
-                    <p>Scan or enter Tag ID to view contents</p>
-                    <button id="btn-start-scan" class="btn btn-primary mt-4" onclick="Scanner.start()"><i class="fa-solid fa-wifi"></i> Start NFC Scan</button>
-                    <button class="btn btn-secondary mt-2" onclick="Scanner.startBarcode()"><i class="fa-solid fa-barcode"></i> Scan Barcode</button>
-                    <div class="mt-2"><button class="btn btn-outline" onclick="Scanner.showManualEntry()"><i class="fa-solid fa-keyboard"></i> Enter Manually</button></div>
+                    <p>Scan or enter Tag ID</p>
+                    <button class="btn btn-primary mt-4" onclick="Scanner.startScan()"><i class="fa-solid fa-wifi"></i> Start Scan</button>
+                    <button class="btn btn-outline mt-2" onclick="UI.showManual()"><i class="fa-solid fa-keyboard"></i> Manual Entry</button>
                 </div>
                 <div class="card">
                     <h3 class="mb-2">Quick Actions</h3>
                     <div class="quick-actions">
-                        <button class="quick-action-btn" onclick="Scanner.showManualEntry()"><i class="fa-solid fa-keyboard"></i><span>Manual</span></button>
-                        <button class="quick-action-btn" onclick="UI.viewMyReports()"><i class="fa-solid fa-file-lines"></i><span>My Reports</span></button>
+                        <button class="quick-action-btn" onclick="UI.showManual()"><i class="fa-solid fa-keyboard"></i><span>Manual</span></button>
+                        <button class="quick-action-btn" onclick="UI.myReports()"><i class="fa-solid fa-file"></i><span>My Reports</span></button>
                     </div>
                 </div>
             </div>
             <div id="result-card" class="staff-result-card" style="display:none;">
-                <div class="storage-icon"><i class="fa-solid fa-box-open"></i></div>
-                <h3 id="res-name">Storage</h3>
-                <span id="res-id" class="tag-badge">Tag: ---</span>
+                <h3 id="res-name"></h3>
+                <span id="res-id"></span>
                 <span id="res-location" class="location-tag"></span>
-                <img id="res-image" class="storage-image hidden" style="margin-top:1rem;">
-                <div class="contents-box">
-                    <label><i class="fa-solid fa-list"></i> Contents</label>
-                    <div id="res-contents"></div>
-                </div>
-                <div class="input-group">
-                    <label>Report an Issue</label>
-                    <textarea id="report-msg" rows="2" placeholder="e.g. Need more milk..."></textarea>
-                </div>
-                <button class="btn btn-danger" onclick="Scanner.submitReport()"><i class="fa-solid fa-paper-plane"></i> Send Report</button>
+                <div class="contents-box"><div id="res-contents"></div></div>
+                <div class="input-group"><textarea id="report-msg" placeholder="Report issue..."></textarea></div>
+                <button class="btn btn-danger" onclick="Scanner.sendReport()">Send Report</button>
             </div>
         </section>
     </main>
-
-    <!-- Modals -->
     <div id="edit-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width:550px;">
-            <h3 style="margin-bottom:1.5rem;">Edit Storage</h3>
-            <form id="edit-inventory-form">
+        <div class="modal-content">
+            <h3>Edit Storage</h3>
+            <form id="edit-form">
                 <input type="hidden" id="edit-id">
-                <div class="input-group"><label>Name</label><input type="text" id="edit-name" required></div>
-                <div class="input-group"><label>Location</label><select id="edit-location"><option value="Kitchen">Kitchen</option><option value="Office">Office</option><option value="Storage Room">Storage Room</option><option value="Garage">Garage</option><option value="Other">Other</option></select></div>
-                <div class="input-group"><label>Tag ID</label><input type="text" id="edit-nfc-id" required></div>
-                <div class="input-group">
-                    <label>Contents</label>
-                    <div id="edit-items-container" style="max-height:200px;overflow-y:auto;margin-bottom:0.5rem;"></div>
-                    <div style="display:flex;gap:0.5rem;">
-                        <input type="text" id="edit-new-item" placeholder="Add new item" style="flex:1;">
-                        <button type="button" onclick="UI.editAddItem()" class="btn btn-secondary" style="width:auto;"><i class="fa-solid fa-plus"></i></button>
-                    </div>
-                </div>
-                <div style="display:flex;gap:1rem;margin-top:2rem;">
-                    <button type="button" onclick="UI.closeEditModal()" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+                <div class="input-group"><label>Name</label><input type="text" id="edit-name"></div>
+                <div class="input-group"><label>Location</label><select id="edit-location"><option>Kitchen</option><option>Office</option><option>Storage</option><option>Garage</option><option>Other</option></select></div>
+                <div class="input-group"><label>Tag ID</label><input type="text" id="edit-nfc"></div>
+                <div class="input-group"><label>Contents</label><div id="edit-items"></div><div style="display:flex;gap:0.5rem"><input type="text" id="edit-new-item"><button type="button" class="btn btn-secondary" onclick="UI.editAddItem()" style="width:auto;">+</button></div></div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" onclick="UI.closeEdit()" class="btn btn-secondary" style="margin-left:0.5rem">Cancel</button>
             </form>
         </div>
     </div>
-
     <div id="register-modal" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="margin-bottom:1.5rem;">Register Admin</h3>
+            <h3>Register Admin</h3>
             <form id="register-form">
-                <div class="input-group"><label>Username</label><input type="text" id="register-username" required></div>
-                <div class="input-group"><label>Email</label><input type="email" id="register-email" required></div>
-                <div class="input-group"><label>Password</label><input type="password" id="register-pass" required></div>
-                <div class="input-group"><label>Confirm</label><input type="password" id="register-pass-confirm" required></div>
-                <div style="display:flex;gap:1rem;margin-top:2rem;">
-                    <button type="button" onclick="UI.closeRegisterModal()" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Register</button>
-                </div>
+                <div class="input-group"><label>Username</label><input type="text" id="reg-username" required></div>
+                <div class="input-group"><label>Email</label><input type="email" id="reg-email" required></div>
+                <div class="input-group"><label>Password</label><input type="password" id="reg-pass" required></div>
+                <div class="input-group"><label>Confirm</label><input type="password" id="reg-pass2" required></div>
+                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="button" onclick="UI.closeRegister()" class="btn btn-secondary" style="margin-left:0.5rem">Cancel</button>
             </form>
         </div>
     </div>
-
-    <div id="manual-entry-modal" class="modal-overlay">
+    <div id="manual-modal" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="margin-bottom:1.5rem;">Enter Tag ID</h3>
-            <div class="input-group"><input type="text" id="manual-tag-id" placeholder="Enter NFC tag ID"></div>
-            <button type="button" onclick="Scanner.processManualEntry()" class="btn btn-primary">Submit</button>
+            <h3>Enter Tag ID</h3>
+            <div class="input-group"><input type="text" id="manual-id" placeholder="Tag ID"></div>
+            <button class="btn btn-primary" onclick="Scanner.processManual()">Submit</button>
+            <button onclick="UI.closeManual()" class="btn btn-secondary" style="margin-left:0.5rem">Cancel</button>
         </div>
     </div>
-
-    <div id="nfc-scan-modal" class="modal-overlay">
-        <div class="modal-content" style="text-align:center; padding: 2.5rem;">
-            <div id="nfc-scan-icon" style="font-size: 4rem; color: var(--primary);"><i class="fa-solid fa-wifi fa-spin"></i></div>
-            <h3 id="nfc-scan-title" style="margin-bottom: 0.5rem;">Scanning...</h3>
-            <p id="nfc-scan-message" style="color: var(--text-light); margin-bottom: 1.5rem;">Hold device near tag</p>
-            <button id="nfc-scan-cancel" onclick="Scanner.cancelScan()" class="btn btn-secondary">Cancel</button>
-        </div>
-    </div>
-
-    <div id="barcode-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 style="margin-bottom:1rem;">Scan Barcode</h3>
-            <div class="barcode-scanner" id="barcode-scanner"></div>
-            <button onclick="Scanner.stopBarcode()" class="btn btn-secondary mt-4">Close</button>
-        </div>
-    </div>
-
     <div id="view-all-modal" class="modal-overlay">
         <div class="modal-content" style="max-width:600px;">
-            <h3 style="margin-bottom:1.5rem;">All Storage</h3>
-            <div id="all-inventory-list" style="max-height:400px;overflow-y:auto;">Loading...</div>
+            <h3>All Storage</h3>
+            <div id="all-list" style="max-height:400px;overflow-y:auto;"></div>
+            <button onclick="document.getElementById('view-all-modal').classList.remove('open')" class="btn btn-secondary mt-4">Close</button>
         </div>
     </div>
-
     <div id="toast-container"></div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyC6upcz8n3OGqRGoazSS2jh0DxlWuqY-lw",
-            authDomain: "sims-nfc.firebaseapp.com",
-            projectId: "sims-nfc",
-            storageBucket: "sims-nfc.firebasestorage.app",
-            messagingSenderId: "275796414733",
-            appId: "1:275796414733:web:2c6e7b5c3fb1b39bdc6044"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyC6upcz8n3OGqRGoazSS2jh0DxlWuqY-lw", authDomain: "sims-nfc.firebaseapp.com", projectId: "sims-nfc", storageBucket: "sims-nfc.firebasestorage.app", messagingSenderId: "275796414733", appId: "1:275796414733:web:2c6e7b5c3fb1b39bdc6044" };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-        // Theme management
         const Theme = {
             init: () => {
-                const saved = localStorage.getItem('theme') || 'light';
-                document.documentElement.setAttribute('data-theme', saved);
-                Theme.updateIcon();
+                const t = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', t);
+                document.getElementById('theme-icon').className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
             },
             toggle: () => {
-                const current = document.documentElement.getAttribute('data-theme');
-                const next = current === 'dark' ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-theme', next);
-                localStorage.setItem('theme', next);
-                Theme.updateIcon();
-            },
-            updateIcon: () => {
-                const icon = document.getElementById('theme-icon');
-                if (icon) {
-                    icon.className = document.documentElement.getAttribute('data-theme') === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-                }
+                const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', t);
+                localStorage.setItem('theme', t);
+                document.getElementById('theme-icon').className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
             }
         };
 
@@ -532,369 +306,172 @@
 
             init: async () => {
                 Theme.init();
-                const adminExists = await DB.checkIfAdminExists();
-                
+                const adminExists = await DB.checkAdmin();
                 onAuthStateChanged(auth, async (user) => {
-                    UI.toggleLoader(true);
                     if (user) {
                         Auth.currentUser = user;
                         try {
                             const q = query(collection(db, "users"), where("uid", "==", user.uid));
-                            const snapshot = await getDocs(q);
-                            if (!snapshot.empty) {
-                                const d = snapshot.docs[0].data();
-                                Auth.userRole = d.role;
-                                Auth.username = d.username || user.email.split('@')[0];
-                            } else {
-                                Auth.userRole = 'admin';
-                                Auth.username = user.email.split('@')[0];
-                            }
+                            const s = await getDocs(q);
+                            if (!s.empty) { Auth.userRole = s.docs[0].data().role; Auth.username = s.docs[0].data().username || user.email.split('@')[0]; }
+                            else { Auth.userRole = 'admin'; Auth.username = user.email.split('@')[0]; }
                         } catch (e) { Auth.userRole = 'admin'; Auth.username = user.email.split('@')[0]; }
                         UI.route();
-                        UI.renderDashboard();
-                    } else {
-                        Auth.currentUser = null;
-                        Auth.userRole = null;
-                        UI.route();
-                    }
-                    UI.toggleLoader(false);
+                    } else { Auth.currentUser = null; Auth.userRole = null; UI.route(); }
                 });
-
-                if (!adminExists) {
-                    UI.showView('view-setup');
-                    UI.toggleLoader(false);
-                }
+                if (!adminExists) { UI.showView('view-setup'); document.getElementById('global-loader').style.display = 'none'; }
             },
-
-            login: async (email, password, rememberMe) => {
-                UI.toggleLoader(true);
+            login: async (email, password, remember) => {
                 try {
-                    if (rememberMe) {
-                        await setPersistence(auth, browserLocalPersistence);
-                    }
+                    if (remember) await setPersistence(auth, browserLocalPersistence);
                     await signInWithEmailAndPassword(auth, email, password);
-                    UI.logActivity('Logged in');
-                    UI.showToast('Welcome back!');
-                } catch (error) { UI.showToast(error.message, 'error'); }
-                finally { UI.toggleLoader(false); }
+                    UI.toast('Welcome!');
+                } catch (e) { UI.toast(e.message, 'error'); }
             },
-
-            logout: async () => {
-                UI.toggleLoader(true);
-                await signOut(auth);
-                UI.logActivity('Logged out');
-                UI.showToast('Logged out');
-                UI.toggleLoader(false);
-            }
+            logout: async () => { await signOut(auth); UI.toast('Logged out'); }
         };
 
         const DB = {
-            checkIfAdminExists: async () => {
-                try {
-                    const q = query(collection(db, "users"), where("role", "==", "admin"));
-                    return !(await getDocs(q)).empty;
-                } catch (e) { return false; }
-            },
-
+            checkAdmin: async () => { try { return !(await getDocs(query(collection(db, "users"), where("role", "==", "admin")))).empty; } catch (e) { return false; } },
             createAdmin: async (email, password) => {
-                UI.toggleLoader(true);
-                try {
-                    const cred = await createUserWithEmailAndPassword(auth, email, password);
-                    await addDoc(collection(db, "users"), { email, role: 'admin', uid: cred.user.uid, createdAt: new Date() });
-                    UI.showToast("System Initialized");
-                } catch (error) { throw error; }
-                finally { UI.toggleLoader(false); }
+                const cred = await createUserWithEmailAndPassword(auth, email, password);
+                await addDoc(collection(db, "users"), { email, role: 'admin', uid: cred.user.uid, createdAt: new Date() });
             },
-
-            getInventory: async () => {
-                const snapshot = await getDocs(collection(db, "inventory"));
-                return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            getInventory: async () => (await getDocs(collection(db, "inventory"))).docs.map(d => ({ id: d.id, ...d.data() })),
+            addInventory: async (item) => await addDoc(collection(db, "inventory"), item),
+            updateInventory: async (id, data) => await updateDoc(doc(db, "inventory", id), data),
+            deleteInventory: async (id) => await deleteDoc(doc(db, "inventory", id)),
+            getStaff: async () => (await getDocs(query(collection(db, "users"), where("role", "==", "staff")))).docs.map(d => ({ id: d.id, ...d.data() })),
+            addStaff: async (email, pass, adminEmail, adminPass) => {
+                await createUserWithEmailAndPassword(auth, email, pass);
+                await addDoc(collection(db, "users"), { email, role: 'staff', createdAt: new Date() });
+                await signOut(auth);
+                await signInWithEmailAndPassword(auth, adminEmail, adminPass);
             },
-
-            addInventory: async (item) => {
-                await addDoc(collection(db, "inventory"), item);
-                UI.logActivity(`Added storage: ${item.name}`);
-            },
-
-            updateInventory: async (docId, data) => {
-                await updateDoc(doc(db, "inventory", docId), data);
-                UI.logActivity(`Updated storage: ${data.name}`);
-            },
-
-            deleteInventory: async (docId, name) => {
-                await deleteDoc(doc(db, "inventory", docId));
-                UI.logActivity(`Deleted storage: ${name}`);
-            },
-
-            addStaffUser: async (staffEmail, staffPass, adminEmail, adminPass) => {
-                UI.toggleLoader(true);
-                try {
-                    const cred = await createUserWithEmailAndPassword(auth, staffEmail, staffPass);
-                    await addDoc(collection(db, "users"), { email: staffEmail, role: 'staff', uid: cred.user.uid, createdAt: new Date() });
-                    await signOut(auth);
-                    await signInWithEmailAndPassword(auth, adminEmail, adminPass);
-                    UI.logActivity(`Created staff account: ${staffEmail}`);
-                    UI.showToast("Staff created!");
-                    return true;
-                } catch (error) {
-                    try { await signInWithEmailAndPassword(auth, adminEmail, adminPass); } catch (e) {}
-                    UI.showToast(error.message, 'error');
-                    return false;
-                } finally { UI.toggleLoader(false); }
-            },
-
-            getStaffList: async () => {
-                const snapshot = await getDocs(query(collection(db, "users"), where("role", "==", "staff")));
-                return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-            },
-
-            deleteStaff: async (docId, email) => {
-                await deleteDoc(doc(db, "users", docId));
-                UI.logActivity(`Removed staff: ${email}`);
-            },
-
-            getReports: async () => {
-                const snapshot = await getDocs(collection(db, "reports"));
-                return snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            },
-
-            addReport: async (report) => {
-                await addDoc(collection(db, "reports"), { ...report, timestamp: new Date().toISOString() });
-                UI.logActivity(`Report submitted: ${report.storageName}`);
-            },
-
-            clearReport: async (docId) => {
-                await deleteDoc(doc(db, "reports", docId));
-            },
-
-            getActivity: async () => {
-                const snapshot = await getDocs(collection(db, "activity"));
-                return snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 50);
-            },
-
-            addActivity: async (action) => {
-                await addDoc(collection(db, "activity"), { action, user: Auth.currentUser?.email, timestamp: new Date().toISOString() });
-            }
+            deleteStaff: async (id) => await deleteDoc(doc(db, "users", id)),
+            getReports: async () => (await getDocs(collection(db, "reports"))).docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)),
+            addReport: async (r) => await addDoc(collection(db, "reports"), { ...r, timestamp: new Date().toISOString() }),
+            deleteReport: async (id) => await deleteDoc(doc(db, "reports", id)),
+            getActivity: async () => (await getDocs(collection(db, "activity"))).docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 20),
+            addActivity: async (a) => await addDoc(collection(db, "activity"), { ...a, user: Auth.currentUser?.email, timestamp: new Date().toISOString() })
         };
 
         const UI = {
-            addInventoryItems: [],
+            items: [],
             editItems: [],
-            searchQuery: '',
+            search: '',
 
-            toggleLoader: (show) => {
-                document.getElementById('global-loader').style.display = show ? 'flex' : 'none';
-            },
-
-            toggleTheme: () => Theme.toggle(),
-
-            showView: (viewId) => {
+            showView: (id) => {
                 document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-                document.getElementById(viewId).classList.add('active');
-                if (viewId === 'view-admin') UI.showPlatformInfo();
-                else if (viewId === 'view-staff') UI.showStaffPlatformInfo();
-            },
-
-            showPlatformInfo: () => {
-                const el = document.getElementById('platform-info');
-                if (!el) return;
-                el.innerHTML = isMobile ? '' : '<div class="platform-banner desktop"><i class="fa-solid fa-desktop"></i><div><strong>Desktop Mode</strong><br>Use manual entry.</div></div>';
-            },
-
-            showStaffPlatformInfo: () => {
-                const el = document.getElementById('staff-platform-info');
-                if (!el) return;
-                el.innerHTML = isMobile ? '' : '<div class="platform-banner desktop"><i class="fa-solid fa-desktop"></i><div><strong>Desktop</strong> - Use manual entry</div></div>';
+                document.getElementById(id).classList.add('active');
+                if (id === 'view-admin') UI.renderDashboard();
             },
 
             route: () => {
-                const header = document.getElementById('app-header');
+                document.getElementById('global-loader').style.display = 'none';
                 if (Auth.currentUser) {
-                    header.style.display = 'flex';
-                    document.getElementById('header-username').innerText = Auth.username;
-                    document.getElementById('header-role').innerText = Auth.userRole.toUpperCase();
-                    document.getElementById('header-role').className = 'badge badge-' + Auth.userRole;
-                    if (Auth.userRole === 'admin') { UI.showView('view-admin'); UI.renderAdmin(); }
-                    else { UI.showView('view-staff'); }
+                    document.getElementById('app-header').style.display = 'flex';
+                    document.getElementById('header-username').textContent = Auth.username;
+                    document.getElementById('header-role').textContent = Auth.userRole?.toUpperCase() || 'ADMIN';
+                    document.getElementById('header-role').className = 'badge badge-' + (Auth.userRole || 'admin');
+                    UI.showView(Auth.userRole === 'admin' ? 'view-admin' : 'view-staff');
                 } else {
-                    header.style.display = 'none';
+                    document.getElementById('app-header').style.display = 'none';
                     UI.showView('view-login');
                 }
             },
 
-            switchTab: (role, tabName) => {
+            switchTab: (role, tab) => {
                 document.querySelectorAll('#view-' + role + ' .nav-item').forEach(el => el.classList.remove('active'));
                 event.target.classList.add('active');
                 document.querySelectorAll('#view-' + role + ' .tab-content').forEach(el => el.style.display = 'none');
-                document.getElementById('tab-' + role + '-' + tabName).style.display = 'block';
-                if (role === 'admin') {
-                    if (tabName === 'dashboard') UI.renderDashboard();
-                    else UI.renderAdmin();
-                }
+                document.getElementById('tab-' + role + '-' + tab).style.display = 'block';
+                if (tab === 'dashboard') UI.renderDashboard();
+                else UI.renderAdmin();
             },
 
             renderDashboard: async () => {
-                const inventory = await DB.getInventory();
-                const staff = await DB.getStaffList();
+                const inv = await DB.getInventory();
+                const staff = await DB.getStaff();
                 const reports = await DB.getReports();
+                document.getElementById('stat-total').textContent = inv.length;
+                document.getElementById('stat-staff').textContent = staff.length;
+                document.getElementById('stat-reports').textContent = reports.length;
+                document.getElementById('stat-alerts').textContent = reports.length;
                 
-                document.getElementById('stat-total').innerText = inventory.length;
-                document.getElementById('stat-staff').innerText = staff.length;
-                document.getElementById('stat-reports').innerText = reports.length;
-                
-                // Low stock count
-                let lowStock = 0;
-                inventory.forEach(item => {
-                    if (item.contents) {
-                        const items = UI.parseContents(item.contents);
-                        items.forEach(i => { if (i.qty <= 2) lowStock++; });
-                    }
-                });
-                document.getElementById('stat-low').innerText = lowStock;
-
-                // Alerts
-                const alertsEl = document.getElementById('alerts-list');
-                let alertsHtml = '';
-                reports.slice(0, 5).forEach(r => {
-                    alertsHtml += `<div class="activity-item"><strong>${r.storageName}</strong>: ${r.message}<div class="activity-time">${new Date(r.timestamp).toLocaleString()}</div></div>`;
-                });
-                if (lowStock > 0) {
-                    alertsHtml += `<div class="activity-item" style="border-left:3px solid var(--warning);"><strong>Low Stock Alert</strong>: ${lowStock} items running low</div>`;
-                }
-                alertsEl.innerHTML = alertsHtml || '<p style="color:var(--text-light)">No alerts</p>';
+                const acts = await DB.getActivity();
+                document.getElementById('activity-list').innerHTML = acts.length ? acts.map(a => `<div class="activity-item"><strong>${a.action}</strong><div class="activity-time">${a.user} - ${new Date(a.timestamp).toLocaleString()}</div></div>`).join('') : '<p style="color:var(--text-light)">No activity</p>';
             },
 
             renderAdmin: async () => {
-                const invList = document.getElementById('inventory-list');
-                const userList = document.getElementById('user-list');
-                const reportList = document.getElementById('admin-reports-list');
-                const activityList = document.getElementById('activity-list');
-
-                let inventory = await DB.getInventory();
-                if (UI.searchQuery) {
-                    const q = UI.searchQuery.toLowerCase();
-                    inventory = inventory.filter(i => i.name.toLowerCase().includes(q) || (i.location && i.location.toLowerCase().includes(q)));
-                }
-
-                if (inventory.length === 0) invList.innerHTML = '<p style="text-align:center;color:var(--text-light)">No items.</p>';
-                else {
-                    invList.innerHTML = inventory.map(item => {
-                        const isLowStock = item.contents && UI.parseContents(item.contents).some(i => i.qty <= 2);
-                        return `<div class="list-item ${isLowStock ? 'low-stock' : ''}"><div class="list-info"><h4>${item.name}</h4><small>ID: ${item.nfcId} ${item.location ? '<span class="location-tag">' + item.location + '</span>' : ''}</small></div><div class="list-actions"><button onclick="UI.openEditModal('${item.id}')" class="btn btn-secondary btn-sm"><i class="fa-solid fa-pen"></i></button><button onclick="if(confirm('Delete?')){DB.deleteInventory('${item.id}','${item.name}');UI.renderAdmin();}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button></div></div>`;
-                    }).join('');
-                }
-
-                const staff = await DB.getStaffList();
-                userList.innerHTML = staff.length ? staff.map(u => `<div class="list-item"><div class="list-info"><h4>${u.email}</h4><small>${new Date(u.createdAt?.seconds * 1000).toLocaleDateString()}</small></div><button onclick="if(confirm('Remove?')){DB.deleteStaff('${u.id}','${u.email}');UI.renderAdmin();}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button></div>`).join('') : '<p style="color:var(--text-light)">No staff.</p>';
-
+                let inv = await DB.getInventory();
+                if (UI.search) inv = inv.filter(i => i.name.toLowerCase().includes(UI.search.toLowerCase()));
+                document.getElementById('inventory-list').innerHTML = inv.length ? inv.map(i => `<div class="list-item"><div class="list-info"><h4>${i.name}</h4><small>${i.nfcId} ${i.location ? '<span class="location-tag">'+i.location+'</span>' : ''}</small></div><div class="list-actions"><button onclick="UI.openEdit('${i.id}')" class="btn btn-secondary btn-sm"><i class="fa-solid fa-pen"></i></button><button onclick="DB.deleteInventory('${i.id}').then(UI.renderAdmin)" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') : '<p style="color:var(--text-light)">No items</p>';
+                
+                const staff = await DB.getStaff();
+                document.getElementById('staff-list').innerHTML = staff.length ? staff.map(s => `<div class="list-item"><div class="list-info"><h4>${s.email}</h4><small>${new Date(s.createdAt?.seconds*1000).toLocaleDateString()}</small></div><button onclick="DB.deleteStaff('${s.id}').then(UI.renderAdmin)" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button></div>`).join('') : '<p style="color:var(--text-light)">No staff</p>';
+                
                 const reports = await DB.getReports();
-                reportList.innerHTML = reports.length ? reports.map(r => `<div class="card" style="border-left:4px solid var(--danger);padding:1rem;"><div style="display:flex;justify-content:space-between;"><strong>${r.storageName}</strong><small>${new Date(r.timestamp).toLocaleDateString()}</small></div><p style="margin:0.5rem 0;font-style:italic;">"${r.message}"</p><button onclick="DB.clearReport('${r.id}');UI.renderAdmin()" class="btn btn-sm btn-secondary">Resolve</button></div>`).join('') : '<p style="color:var(--text-light)">No reports.</p>';
-
-                const activity = await DB.getActivity();
-                activityList.innerHTML = activity.length ? activity.map(a => `<div class="activity-item"><strong>${a.action}</strong><div class="activity-time">${a.user} - ${new Date(a.timestamp).toLocaleString()}</div></div>`).join('') : '<p style="color:var(--text-light)">No activity.</p>';
+                document.getElementById('reports-list').innerHTML = reports.length ? reports.map(r => `<div class="card" style="border-left:4px solid var(--danger)"><div style="display:flex;justify-content:space-between"><strong>${r.storageName}</strong><small>${new Date(r.timestamp).toLocaleString()}</small></div><p>"${r.message}"</p><button onclick="DB.deleteReport('${r.id}').then(UI.renderAdmin)" class="btn btn-sm btn-secondary">Resolve</button></div>`).join('') : '<p style="color:var(--text-light)">No reports</p>';
             },
 
-            searchInventory: () => {
-                UI.searchQuery = document.getElementById('search-inventory').value;
-                UI.renderAdmin();
+            search: (val) => { UI.search = val; UI.renderAdmin(); },
+
+            parseContents: (c) => { if (!c) return []; return c.split('\n').filter(l => l.trim()).map(l => { const m = l.match(/^(.+?):\s*(\d+)/); return m ? {name: m[1].trim(), qty: parseInt(m[2])} : {name: l.trim(), qty: 1}; }); },
+            contents: (arr) => arr.map(i => i.name + ': ' + i.qty).join('\n'),
+
+            addItem: () => {
+                const v = document.getElementById('new-item').value.trim();
+                if (!v) return;
+                const e = UI.items.find(i => i.name.toLowerCase() === v.toLowerCase());
+                if (e) e.qty++;
+                else UI.items.push({name: v, qty: 1});
+                document.getElementById('new-item').value = '';
+                UI.renderItems();
             },
 
-            logActivity: async (action) => {
-                await DB.addActivity(action);
+            renderItems: () => {
+                document.getElementById('items-list').innerHTML = UI.items.length ? UI.items.map((i, idx) => `<div class="item-row"><span>${i.name}</span><div style="display:flex;align-items:center;gap:0.5rem"><button class="qty-btn minus" onclick="UI.qty(${idx},-1)">-</button>${i.qty}<button class="qty-btn" onclick="UI.qty(${idx},1)">+</button><button class="delete-btn" onclick="UI.delItem(${idx})"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') : '<p style="color:var(--text-light)">No items</p>';
             },
 
-            parseContents: (contents) => {
-                if (!contents) return [];
-                return contents.split('\n').filter(l => l.trim()).map(l => {
-                    const m = l.match(/^(.+?):\s*(\d+)\s*$/);
-                    return m ? { name: m[1].trim(), qty: parseInt(m[2]) } : { name: l.trim(), qty: 1 };
-                });
-            },
+            qty: (idx, d) => { UI.items[idx].qty = Math.max(1, UI.items[idx].qty + d); UI.renderItems(); },
+            delItem: (idx) => { UI.items.splice(idx, 1); UI.renderItems(); },
 
-            contentsFromItems: () => UI.editItems.map(i => i.name + ': ' + i.qty).join('\n'),
-
-            openEditModal: async (id) => {
-                const items = await DB.getInventory();
-                const item = items.find(i => i.id === id);
+            openEdit: async (id) => {
+                const inv = await DB.getInventory();
+                const item = inv.find(i => i.id === id);
                 if (!item) return;
                 document.getElementById('edit-id').value = item.id;
                 document.getElementById('edit-name').value = item.name;
                 document.getElementById('edit-location').value = item.location || 'Other';
-                document.getElementById('edit-nfc-id').value = item.nfcId;
+                document.getElementById('edit-nfc').value = item.nfcId;
                 UI.editItems = UI.parseContents(item.contents);
-                UI.renderEditItems();
+                document.getElementById('edit-items').innerHTML = UI.editItems.length ? UI.editItems.map((i, idx) => `<div class="item-row"><span>${i.name}</span><div style="display:flex;align-items:center;gap:0.5rem"><button class="qty-btn minus" onclick="UI.editQty(${idx},-1)">-</button>${i.qty}<button class="qty-btn" onclick="UI.editQty(${idx},1)">+</button><button class="delete-btn" onclick="UI.editDel(${idx})"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') : '';
                 document.getElementById('edit-modal').classList.add('open');
             },
 
-            closeEditModal: () => {
-                document.getElementById('edit-modal').classList.remove('open');
-                UI.editItems = [];
-            },
+            editQty: (idx, d) => { UI.editItems[idx].qty = Math.max(1, UI.editItems[idx].qty + d); document.getElementById('edit-items').innerHTML = UI.editItems.map((i, idx) => `<div class="item-row"><span>${i.name}</span><div style="display:flex;align-items:center;gap:0.5rem"><button class="qty-btn minus" onclick="UI.editQty(${idx},-1)">-</button>${i.qty}<button class="qty-btn" onclick="UI.editQty(${idx},1)">+</button><button class="delete-btn" onclick="UI.editDel(${idx})"><i class="fa-solid fa-trash"></i></button></div></div>`).join(''); },
+            editDel: (idx) => { UI.editItems.splice(idx, 1); document.getElementById('edit-items').innerHTML = UI.editItems.map((i, idx) => `<div class="item-row"><span>${i.name}</span><div style="display:flex;align-items:center;gap:0.5rem"><button class="qty-btn minus" onclick="UI.editQty(${idx},-1)">-</button>${i.qty}<button class="qty-btn" onclick="UI.editQty(${idx},1)">+</button><button class="delete-btn" onclick="UI.editDel(${idx})"><i class="fa-solid fa-trash"></i></button></div></div>`).join(''); },
+            editAddItem: () => { const v = document.getElementById('edit-new-item').value.trim(); if(!v)return; const e=UI.editItems.find(i=>i.name.toLowerCase()===v.toLowerCase()); if(e)e.qty++;else UI.editItems.push({name:v,qty:1}); document.getElementById('edit-new-item').value=''; UI.openEdit(document.getElementById('edit-id').value); },
 
-            renderEditItems: () => {
-                const c = document.getElementById('edit-items-container');
-                c.innerHTML = UI.editItems.length ? UI.editItems.map((i, idx) => `<div class="item-row"><span>${i.name}</span><div style="display:flex;align-items:center;gap:0.5rem"><button class="qty-btn minus" onclick="UI.editQty(${idx},-1)">-</button><span>${i.qty}</span><button class="qty-btn" onclick="UI.editQty(${idx},1)">+</button><button class="delete-btn" onclick="UI.editDelete(${idx})"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') : '<p style="color:var(--text-light);text-align:center">No items</p>';
-            },
-
-            editQty: (idx, delta) => { UI.editItems[idx].qty = Math.max(1, UI.editItems[idx].qty + delta); UI.renderEditItems(); },
-            editDelete: (idx) => { UI.editItems.splice(idx, 1); UI.renderEditItems(); },
-            editAddItem: () => {
-                const v = document.getElementById('edit-new-item').value.trim();
-                if (!v) return;
-                const existing = UI.editItems.find(i => i.name.toLowerCase() === v.toLowerCase());
-                if (existing) existing.qty++;
-                else UI.editItems.push({ name: v, qty: 1 });
-                document.getElementById('edit-new-item').value = '';
-                UI.renderEditItems();
-            },
-
-            renderAddInventoryItems: () => {
-                const c = document.getElementById('add-items-container');
-                c.innerHTML = UI.addInventoryItems.length ? UI.addInventoryItems.map((i, idx) => `<div class="item-row"><span>${i.name}</span><div style="display:flex;align-items:center;gap:0.5rem"><button class="qty-btn minus" onclick="UI.addItemQty(${idx},-1)">-</button><span>${i.qty}</span><button class="qty-btn" onclick="UI.addItemQty(${idx},1)">+</button><button class="delete-btn" onclick="UI.addItemDelete(${idx})"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') : '<p style="color:var(--text-light);text-align:center">No items</p>';
-            },
-
-            addInventoryItem: () => {
-                const v = document.getElementById('inv-new-item').value.trim();
-                if (!v) return;
-                const existing = UI.addInventoryItems.find(i => i.name.toLowerCase() === v.toLowerCase());
-                if (existing) existing.qty++;
-                else UI.addInventoryItems.push({ name: v, qty: 1 });
-                document.getElementById('inv-new-item').value = '';
-                UI.renderAddInventoryItems();
-            },
-
-            addItemQty: (idx, delta) => { UI.addInventoryItems[idx].qty = Math.max(1, UI.addInventoryItems[idx].qty + delta); UI.renderAddInventoryItems(); },
-            addItemDelete: (idx) => { UI.addInventoryItems.splice(idx, 1); UI.renderAddInventoryItems(); },
-
-            previewImage: (input, previewId) => {
-                const preview = document.getElementById(previewId);
-                if (input.files && input.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = e => { preview.src = e.target.result; preview.classList.remove('hidden'); };
-                    reader.readAsDataURL(input.files[0]);
-                }
-            },
-
-            showViewAllInventory: async () => {
-                const items = await DB.getInventory();
-                document.getElementById('all-inventory-list').innerHTML = items.length ? items.map(i => `<div class="list-item"><div class="list-info"><h4>${i.name}</h4><small>${i.nfcId}</small></div><button onclick="UI.copyTagId('${i.nfcId}')" class="btn btn-secondary btn-sm"><i class="fa-regular fa-copy"></i></button></div>`).join('') : '<p>No items</p>';
+            closeEdit: () => { document.getElementById('edit-modal').classList.remove('open'); UI.editItems=[]; },
+            showRegisterModal: () => document.getElementById('register-modal').classList.add('open'),
+            closeRegister: () => { document.getElementById('register-modal').classList.remove('open'); document.getElementById('register-form').reset(); },
+            showManual: () => document.getElementById('manual-modal').classList.add('open'),
+            closeManual: () => { document.getElementById('manual-modal').classList.remove('open'); document.getElementById('manual-id').value=''; },
+            showViewAll: async () => {
+                const inv = await DB.getInventory();
+                document.getElementById('all-list').innerHTML = inv.length ? inv.map(i => `<div class="list-item"><div class="list-info"><h4>${i.name}</h4><small>${i.nfcId}</small></div></div>`).join('') : '<p>No items</p>';
                 document.getElementById('view-all-modal').classList.add('open');
             },
-
-            copyTagId: (id) => { navigator.clipboard.writeText(id); UI.showToast('Copied!'); },
-
-            exportInventory: async () => {
-                const items = await DB.getInventory();
-                if (!items.length) return UI.showToast('No items', 'error');
+            exportData: async () => {
+                const inv = await DB.getInventory();
                 let csv = 'Name,Location,Tag ID,Contents\n';
-                items.forEach(i => { csv += `"${i.name}","${i.location||''}","${i.nfcId}","${(i.contents||'').replace(/"/g,'""')}"\n`; });
-                const blob = new Blob([csv], { type: 'text/csv' });
-                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'inventory.csv'; a.click();
-                UI.logActivity('Exported inventory');
-                UI.showToast('Exported!');
+                inv.forEach(i => { csv += `"${i.name}","${i.location||''}","${i.nfcId}","${(i.contents||'').replace(/"/g,'""')}"\n`; });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download = 'inventory.csv'; a.click();
+                UI.toast('Exported!');
             },
-
-            importInventory: async (input) => {
+            importData: async (input) => {
                 const file = input.files[0];
                 if (!file) return;
                 const reader = new FileReader();
@@ -902,225 +479,91 @@
                     const lines = e.target.result.split('\n').slice(1);
                     for (const line of lines) {
                         const [name, location, nfcId, contents] = line.split(',').map(s => s.replace(/"/g, '').trim());
-                        if (name && nfcId) await DB.addInventory({ name, location, nfcId, contents: contents || '' });
+                        if (name && nfcId) await DB.addInventory({name, location, nfcId, contents: contents || ''});
                     }
-                    UI.showToast('Imported!');
+                    UI.toast('Imported!');
                     UI.renderAdmin();
                 };
                 reader.readAsText(file);
             },
-
-            viewMyReports: async () => {
+            myReports: async () => {
                 const reports = await DB.getReports();
                 const mine = reports.filter(r => r.author === Auth.currentUser?.email);
-                if (!mine.length) return UI.showToast('No reports', 'error');
-                alert('Your Reports:\n\n' + mine.map(r => `• ${r.storageName}: ${r.message}`).join('\n'));
+                if (!mine.length) return UI.toast('No reports', 'error');
+                alert('Your Reports:\n\n' + mine.map(r => '• ' + r.storageName + ': ' + r.message).join('\n'));
             },
-
-            showResult: (item) => {
-                document.getElementById('res-name').innerText = item.name;
-                document.getElementById('res-id').innerText = 'Tag: ' + item.nfcId;
-                document.getElementById('res-location').innerText = item.location || '';
-                const img = document.getElementById('res-image');
-                if (item.image) { img.src = item.image; img.classList.remove('hidden'); }
-                else img.classList.add('hidden');
-                
-                const contentsDiv = document.getElementById('res-contents');
-                const items = UI.parseContents(item.contents);
-                contentsDiv.innerHTML = items.length ? items.map(i => `<div class="item-row"><span><i class="fa-solid fa-check"></i> ${i.name}</span><span>x${i.qty}</span></div>`).join('') : '<p>No items</p>';
-                
-                document.getElementById('result-card').style.display = 'block';
-                document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
-            },
-
-            closeResult: () => document.getElementById('result-card').style.display = 'none',
-
-            showToast: (msg, type = 'success') => {
+            toast: (msg, type='success') => {
                 const t = document.createElement('div');
-                t.className = `toast ${type}`;
-                t.innerHTML = `<i class="fa-solid fa-${type==='error'?'circle-exclamation':'circle-check'}"></i> <span>${msg}</span>`;
+                t.className = 'toast ' + type;
+                t.innerHTML = '<i class="fa-solid fa-' + (type==='error'?'circle-exclamation':'circle-check') + '"></i> ' + msg;
                 document.getElementById('toast-container').appendChild(t);
                 setTimeout(() => t.remove(), 3500);
-            },
-
-            showRegisterModal: () => document.getElementById('register-modal').classList.add('open'),
-            closeRegisterModal: () => { document.getElementById('register-modal').classList.remove('open'); document.getElementById('register-form').reset(); },
-            showManualEntry: () => document.getElementById('manual-entry-modal').classList.add('open'),
-            closeManualEntry: () => { document.getElementById('manual-entry-modal').classList.remove('open'); document.getElementById('manual-tag-id').value = ''; }
+            }
         };
 
         const Scanner = {
             currentItem: null,
-            registrationReader: null,
-            barcodeStream: null,
-
-            start: async () => {
-                if (!('NDEFReader' in window)) return UI.showToast('NFC not supported', 'error');
-                document.getElementById('nfc-scan-modal').classList.add('open');
+            startScan: () => {
+                if (!('NDEFReader' in window)) return UI.toast('NFC not supported', 'error');
+                try {
+                    const ndef = new NDEFReader();
+                    ndef.scan();
+                    ndef.onreading = e => Scanner.handle(e.serialNumber);
+                    UI.toast('Scanning...');
+                } catch (e) { UI.toast('NFC Error', 'error'); }
+            },
+            scanTag: async () => {
+                if (!('NDEFReader' in window)) return UI.toast('NFC not supported', 'error');
                 try {
                     const ndef = new NDEFReader();
                     await ndef.scan();
-                    ndef.onreading = e => { Scanner.showScanSuccess(e.serialNumber); };
-                    ndef.onerror = () => { Scanner.showScanError('Scan failed'); };
-                } catch (e) { Scanner.showScanError('NFC unavailable'); }
+                    ndef.onreading = e => { document.getElementById('inv-nfc-id').value = e.serialNumber; UI.toast('Tag: ' + e.serialNumber); };
+                    UI.toast('Ready to scan...');
+                } catch (e) { UI.toast('Error', 'error'); }
             },
-
-            showScanSuccess: (tagId) => {
-                document.getElementById('nfc-scan-icon').innerHTML = '<i class="fa-solid fa-check-circle" style="color:var(--success)"></i>';
-                document.getElementById('nfc-scan-title').innerText = 'Found!';
-                document.getElementById('nfc-scan-message').innerText = 'ID: ' + tagId;
-                setTimeout(() => { Scanner.closeScanModal(); Scanner.handleScan(tagId); }, 1000);
+            processManual: () => {
+                const id = document.getElementById('manual-id').value.trim();
+                if (!id) return UI.toast('Enter ID', 'error');
+                UI.closeManual();
+                Scanner.handle(id);
             },
-
-            showScanError: (msg) => {
-                document.getElementById('nfc-scan-icon').innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:var(--danger)"></i>';
-                document.getElementById('nfc-scan-title').innerText = 'Failed';
-                document.getElementById('nfc-scan-message').innerText = msg;
-                document.getElementById('nfc-scan-cancel').innerText = 'Close';
-            },
-
-            closeScanModal: () => document.getElementById('nfc-scan-modal').classList.remove('open'),
-            cancelScan: () => Scanner.closeScanModal(),
-
-            startBarcode: async () => {
-                document.getElementById('barcode-modal').classList.add('open');
-                const video = document.createElement('video');
-                document.getElementById('barcode-scanner').appendChild(video);
-                try {
-                    Scanner.barcodeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                    video.srcObject = Scanner.barcodeStream;
-                    video.play();
-                    // Note: Full barcode scanning requires a library like quagga or zxing
-                    UI.showToast('Camera opened - use manual entry for now');
-                } catch (e) { UI.showToast('Camera not available', 'error'); }
-            },
-
-            stopBarcode: () => {
-                if (Scanner.barcodeStream) {
-                    Scanner.barcodeStream.getTracks().forEach(t => t.stop());
-                    Scanner.barcodeStream = null;
+            handle: async (nfcId) => {
+                const inv = await DB.getInventory();
+                const item = inv.find(i => i.nfcId.toLowerCase() === nfcId.toLowerCase());
+                if (item) {
+                    Scanner.currentItem = item;
+                    document.getElementById('res-name').textContent = item.name;
+                    document.getElementById('res-id').textContent = 'Tag: ' + item.nfcId;
+                    document.getElementById('res-location').textContent = item.location || '';
+                    const items = UI.parseContents(item.contents);
+                    document.getElementById('res-contents').innerHTML = items.length ? items.map(i => `<div class="item-row"><span>${i.name}</span><span>x${i.qty}</span></div>`).join('') : '<p>No items</p>';
+                    document.getElementById('result-card').style.display = 'block';
+                    document.getElementById('result-card').scrollIntoView({behavior:'smooth'});
+                    UI.toast('Found: ' + item.name);
+                } else {
+                    UI.toast('Unknown: ' + nfcId, 'error');
                 }
-                document.getElementById('barcode-modal').classList.remove('open');
             },
-
-            startRegistrationScan: async () => {
-                const input = document.getElementById('inv-nfc-id');
-                if (!('NDEFReader' in window)) return UI.showToast('NFC not supported', 'error');
-                try {
-                    const ndef = new NDEFReader();
-                    await ndef.scan();
-                    ndef.onreading = e => { input.value = e.serialNumber; UI.showToast('Tag ID: ' + e.serialNumber); };
-                } catch (e) { UI.showToast('NFC Error', 'error'); }
-            },
-
-            showManualEntry: () => document.getElementById('manual-entry-modal').classList.add('open'),
-
-            processManualEntry: () => {
-                const id = document.getElementById('manual-tag-id').value.trim();
-                if (!id) return UI.showToast('Enter ID', 'error');
-                UI.closeManualEntry();
-                Scanner.handleScan(id);
-            },
-
-            handleScan: async (nfcId) => {
-                const items = await DB.getInventory();
-                const item = items.find(i => i.nfcId.toLowerCase() === nfcId.toLowerCase());
-                if (item) { Scanner.currentItem = item; UI.showResult(item); UI.showToast('Found: ' + item.name); }
-                else UI.showToast('Unknown: ' + nfcId, 'error');
-            },
-
-            submitReport: async () => {
+            sendReport: async () => {
                 const msg = document.getElementById('report-msg').value;
-                if (!msg) return UI.showToast('Enter message', 'error');
+                if (!msg) return UI.toast('Enter message', 'error');
                 await DB.addReport({ storageName: Scanner.currentItem.name, storageId: Scanner.currentItem.nfcId, message: msg, author: Auth.currentUser.email });
-                UI.showToast('Report sent!');
+                UI.toast('Report sent!');
                 document.getElementById('report-msg').value = '';
-                UI.closeResult();
+                document.getElementById('result-card').style.display = 'none';
             }
         };
 
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            Auth.init();
-
-            document.getElementById('setup-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                try { await DB.createAdmin(document.getElementById('setup-email').value, document.getElementById('setup-pass').value); }
-                catch (err) { UI.showToast(err.message, 'error'); }
-            });
-
-            document.getElementById('login-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const remember = document.getElementById('remember-me').checked;
-                Auth.login(document.getElementById('login-email').value, document.getElementById('login-password').value, remember);
-            });
-
-            document.getElementById('register-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const u = document.getElementById('register-username').value;
-                const e2 = document.getElementById('register-email').value;
-                const p = document.getElementById('register-pass').value;
-                const pc = document.getElementById('register-pass-confirm').value;
-                if (p !== pc) return UI.showToast('Passwords mismatch', 'error');
-                UI.toggleLoader(true);
-                try {
-                    const cred = await createUserWithEmailAndPassword(auth, e2, p);
-                    await addDoc(collection(db, "users"), { email: e2, username: u, role: 'admin', uid: cred.user.uid, createdAt: new Date() });
-                    await signOut(auth);
-                    await signInWithEmailAndPassword(auth, e2, p);
-                    UI.showToast('Account created!');
-                    UI.closeRegisterModal();
-                } catch (err) { UI.showToast(err.message, 'error'); }
-                finally { UI.toggleLoader(false); }
-            });
-
-            document.getElementById('add-inventory-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const img = document.getElementById('inv-image-preview').src;
-                await DB.addInventory({ 
-                    name: document.getElementById('inv-name').value,
-                    location: document.getElementById('inv-location').value,
-                    nfcId: document.getElementById('inv-nfc-id').value,
-                    contents: UI.addInventoryItems.map(i => i.name + ': ' + i.qty).join('\n'),
-                    image: img.includes('data:') ? img : null
-                });
-                UI.showToast('Registered!');
-                e.target.reset();
-                UI.addInventoryItems = [];
-                UI.renderAddInventoryItems();
-                document.getElementById('inv-image-preview').classList.add('hidden');
-                UI.renderAdmin();
-            });
-
-            document.getElementById('add-user-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const ok = await DB.addStaffUser(document.getElementById('user-email').value, document.getElementById('user-pass').value, Auth.currentUser.email, document.getElementById('admin-pass-confirm').value);
-                if (ok) { e.target.reset(); UI.renderAdmin(); }
-            });
-
-            document.getElementById('edit-inventory-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                await DB.updateInventory(document.getElementById('edit-id').value, { 
-                    name: document.getElementById('edit-name').value,
-                    location: document.getElementById('edit-location').value,
-                    nfcId: document.getElementById('edit-nfc-id').value,
-                    contents: UI.contentsFromItems()
-                });
-                UI.showToast('Updated!');
-                UI.closeEditModal();
-                UI.renderAdmin();
-            });
-
-            document.getElementById('manual-tag-id').addEventListener('keypress', e => { if (e.key === 'Enter') Scanner.processManualEntry(); });
-            document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open')); });
+        document.addEventListener('DOMContentLoaded', () => { Auth.init(); 
+            document.getElementById('setup-form').onsubmit = async e => { e.preventDefault(); try { await DB.createAdmin(document.getElementById('setup-email').value, document.getElementById('setup-pass').value); } catch(err) { UI.toast(err.message, 'error'); }};
+            document.getElementById('login-form').onsubmit = e => { e.preventDefault(); Auth.login(document.getElementById('login-email').value, document.getElementById('login-password').value, document.getElementById('remember-me').checked); };
+            document.getElementById('register-form').onsubmit = async e => { e.preventDefault(); const u=document.getElementById('reg-username').value, e2=document.getElementById('reg-email').value, p=document.getElementById('reg-pass').value, pc=document.getElementById('reg-pass2').value; if(p!==pc) return UI.toast('Passwords mismatch','error'); try { const c=await createUserWithEmailAndPassword(auth,e2,p); await addDoc(collection(db,"users"),{email:e2,username:u,role:'admin',uid:c.user.uid,createdAt:new Date()}); await signOut(auth); await signInWithEmailAndPassword(auth,e2,p); UI.toast('Account created!'); UI.closeRegister(); }catch(err){UI.toast(err.message,'error');}};
+            document.getElementById('add-form').onsubmit = async e => { e.preventDefault(); await DB.addInventory({name:document.getElementById('inv-name').value,location:document.getElementById('inv-location').value,nfcId:document.getElementById('inv-nfc-id').value,contents:UI.contents(UI.items)}); UI.toast('Registered!'); e.target.reset(); UI.items=[]; UI.renderItems(); UI.renderAdmin(); };
+            document.getElementById('staff-form').onsubmit = async e => { e.preventDefault(); try{await DB.addStaff(document.getElementById('staff-email').value,document.getElementById('staff-pass').value,Auth.currentUser.email,document.getElementById('admin-pass').value);UI.toast('Staff created!');e.target.reset();UI.renderAdmin();}catch(err){UI.toast(err.message,'error');}};
+            document.getElementById('edit-form').onsubmit = async e => { e.preventDefault(); await DB.updateInventory(document.getElementById('edit-id').value,{name:document.getElementById('edit-name').value,location:document.getElementById('edit-location').value,nfcId:document.getElementById('edit-nfc').value,contents:UI.contents(UI.editItems)});UI.toast('Updated!');UI.closeEdit();UI.renderAdmin();};
+            document.getElementById('manual-id').onkeypress = e => { if(e.key==='Enter') Scanner.processManual(); };
         });
-
-        // PWA Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
-        }
-
-        window.Auth = Auth; window.UI = UI; window.Scanner = Scanner; window.DB = DB;
+        window.Auth = Auth; window.UI = UI; window.Scanner = Scanner; window.DB = DB; window.Theme = Theme;
     </script>
 </body>
 </html>
