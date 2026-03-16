@@ -411,6 +411,7 @@
         .search-box {
             position: relative;
             margin-bottom: 1rem;
+            z-index: 1;
         }
         .search-box input {
             width: 100%;
@@ -420,6 +421,8 @@
             font-size: 0.95rem;
             background: var(--surface);
             color: var(--text-main);
+            position: relative;
+            z-index: 1;
         }
         .search-box i {
             position: absolute;
@@ -427,6 +430,7 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-light);
+            z-index: 2;
         }
 
         .category-filter {
@@ -434,6 +438,8 @@
             gap: 0.5rem;
             margin-bottom: 1rem;
             flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
         }
         .category-chip {
             padding: 0.4rem 0.8rem;
@@ -444,6 +450,8 @@
             border: 1px solid var(--border);
             color: var(--text-light);
             transition: all 0.2s;
+            position: relative;
+            z-index: 1;
         }
         .category-chip:hover, .category-chip.active {
             background: var(--primary);
@@ -482,6 +490,13 @@
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-grid .stat-box {
+            position: relative;
+            z-index: 1;
         }
         .stat-box {
             background: var(--surface);
@@ -688,9 +703,9 @@
 
         <section id="view-admin" class="view">
             <div class="nav-tabs">
-                <div class="nav-item active" onclick="UI.switchTab('admin', 'inventory')">Inventory</div>
-                <div class="nav-item" onclick="UI.switchTab('admin', 'users')">Staff</div>
-                <div class="nav-item" onclick="UI.switchTab('admin', 'reports')">Reports</div>
+                <div class="nav-item active" onclick="UI.switchTab('admin', 'inventory', this)">Inventory</div>
+                <div class="nav-item" onclick="UI.switchTab('admin', 'users', this)">Staff</div>
+                <div class="nav-item" onclick="UI.switchTab('admin', 'reports', this)">Reports</div>
             </div>
 
             <div id="tab-admin-inventory" class="tab-content">
@@ -1431,16 +1446,18 @@
                 }
             },
 
-            switchTab: (role, tabName) => {
+            switchTab: (role, tabName, element) => {
                 document.querySelectorAll('#view-' + role + ' .nav-item').forEach(el => el.classList.remove('active'));
-                event.target.classList.add('active');
+                if (element) element.classList.add('active');
                 document.querySelectorAll('#view-' + role + ' .tab-content').forEach(el => el.style.display = 'none');
                 document.getElementById('tab-' + role + '-' + tabName).style.display = 'block';
                 if (role === 'admin') UI.renderAdmin();
             },
 
             renderAdmin: async () => {
+                try {
                 const invList = document.getElementById('inventory-list');
+                if (!invList) return;
                 invList.innerHTML = '<div class="text-center" style="padding:2rem;color:var(--text-light);"><i class="fa-solid fa-spinner fa-spin"></i></div>';
                 
                 let invData = await DB.getInventory(Auth.currentUser.email);
@@ -1473,11 +1490,18 @@
                 
                 const reportData = await DB.getReports();
                 
-                document.getElementById('stat-total').innerText = allInv.length;
-                document.getElementById('stat-items').innerText = totalItems;
-                document.getElementById('stat-alerts').innerText = lowStockCount;
-                document.getElementById('stat-reports').innerText = reportData.length;
-                document.getElementById('total-inventory').innerText = allInv.length;
+                // Update stats - with fallbacks if elements don't exist
+                const statTotal = document.getElementById('stat-total');
+                const statItems = document.getElementById('stat-items');
+                const statAlerts = document.getElementById('stat-alerts');
+                const statReports = document.getElementById('stat-reports');
+                const totalInventory = document.getElementById('total-inventory');
+                
+                if (statTotal) statTotal.innerText = allInv.length;
+                if (statItems) statItems.innerText = totalItems;
+                if (statAlerts) statAlerts.innerText = lowStockCount;
+                if (statReports) statReports.innerText = reportData.length;
+                if (totalInventory) totalInventory.innerText = allInv.length;
                 
                 if (invData.length === 0) {
                     invList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-box-open"></i><h3>No Storage Registered</h3><p>Add your first NFC storage to get started</p></div>';
@@ -1516,6 +1540,9 @@
                 if (reportData.length === 0) reportList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle"></i><h3>All Clear</h3><p>No incident reports from staff</p></div>';
                 else {
                     reportList.innerHTML = reportData.map(r => '<div class="card" style="border-left:4px solid #ef4444;padding:1rem;margin-bottom:0.75rem;"><div style="display:flex;justify-content:space-between;align-items:center;"><strong style="color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> ' + r.storageName + '</strong><small style="color:var(--text-light);">' + new Date(r.timestamp).toLocaleDateString() + '</small></div><p style="margin:0.75rem 0;font-style:italic;">"' + r.message + '"</p><div style="font-size:0.8rem;color:var(--text-light);display:flex;justify-content:space-between;align-items:center;"><span><i class="fa-solid fa-user"></i> ' + r.author + '</span><button onclick="DB.clearReport(\'' + r.id + '\');UI.renderAdmin()" class="btn btn-sm btn-secondary">Mark Resolved</button></div></div>').join('');
+                }
+                } catch (e) {
+                    console.error('renderAdmin error:', e);
                 }
             },
 
