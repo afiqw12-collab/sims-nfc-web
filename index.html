@@ -767,24 +767,25 @@
                     if (user) {
                         Auth.currentUser = user;
                         try {
-                            // Try to find user by email or UID
-                            const q = query(collection(db, "users"), where("email", "==", user.email));
-                            const snapshot = await getDocs(q);
-                            if (!snapshot.empty) {
-                                const userData = snapshot.docs[0].data();
+                            // First try to find user by UID (most reliable)
+                            const q2 = query(collection(db, "users"), where("uid", "==", user.uid));
+                            const snapshot2 = await getDocs(q2);
+                            if (!snapshot2.empty) {
+                                const userData = snapshot2.docs[0].data();
                                 Auth.userRole = userData.role;
                                 Auth.adminEmail = userData.adminEmail || null;
                                 Auth.username = userData.username || user.email.split('@')[0];
                             } else {
-                                // Try by UID
-                                const q2 = query(collection(db, "users"), where("uid", "==", user.uid));
-                                const snapshot2 = await getDocs(q2);
-                                if (!snapshot2.empty) {
-                                    const userData = snapshot2.docs[0].data();
+                                // Try by email as fallback
+                                const q = query(collection(db, "users"), where("email", "==", user.email));
+                                const snapshot = await getDocs(q);
+                                if (!snapshot.empty) {
+                                    const userData = snapshot.docs[0].data();
                                     Auth.userRole = userData.role;
                                     Auth.adminEmail = userData.adminEmail || null;
                                     Auth.username = userData.username || user.email.split('@')[0];
                                 } else {
+                                    // No record found - default to admin
                                     Auth.userRole = 'admin';
                                     Auth.username = user.email.split('@')[0];
                                 }
@@ -1498,17 +1499,25 @@
                 
                 UI.toggleLoader(true);
                 try {
+                    // Create user in Firebase Auth
                     const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    const uid = userCredential.user.uid;
+                    
+                    // Save user to Firestore with admin role
                     await addDoc(collection(db, "users"), { 
                         email: email, 
                         username: username,
                         role: 'admin', 
-                        uid: userCredential.user.uid,
+                        uid: uid,
                         createdAt: new Date()
                     });
-                    await signOut(auth);
-                    UI.showToast('Admin account created! You can now login.');
+                    
+                    UI.showToast('Admin account created successfully!');
                     UI.closeRegisterModal();
+                    
+                    // Automatically login as the new admin
+                    await signOut(auth);
+                    await signInWithEmailAndPassword(auth, email, pass);
                 } catch (error) { 
                     console.error('Register error:', error);
                     UI.showToast(error.message, 'error'); 
