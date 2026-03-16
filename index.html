@@ -79,6 +79,8 @@
         .staff-result-card textarea { background: rgba(255,255,255,0.9); border: none; border-radius: 8px; }
         .staff-result-card .btn-danger { background: white; color: #764ba2; }
         .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; width: auto; }
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 
         .card { 
             background: var(--surface); 
@@ -427,18 +429,6 @@
                             <i class="fa-solid fa-user-plus"></i> Register Admin
                         </button>
                     </div>
-                    <div style="margin-top: 1.5rem; padding: 1rem; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0;">
-                        <p style="margin-bottom: 0.75rem; color: #166534; font-size: 0.9rem; font-weight: 500;"><i class="fa-solid fa-flask"></i> Try Demo Accounts</p>
-                        <button type="button" onclick="DB.createDemoAccounts()" class="btn btn-secondary" style="background: #166534; color: white; border-color: #166534;" id="demo-btn">
-                            <i class="fa-solid fa-magic"></i> Create Demo Accounts
-                        </button>
-                        <div id="demo-accounts" style="display:none; margin-top:1rem; font-size:0.85rem; color:#166534;">
-                            <p style="font-weight:600; margin-bottom:0.5rem;">Demo Admin:</p>
-                            <code style="background:#fff;padding:0.25rem 0.5rem;border-radius:4px;display:block;margin-bottom:0.5rem;">admin@demo.com / demo123</code>
-                            <p style="font-weight:600; margin-bottom:0.5rem;">Demo Staff:</p>
-                            <code style="background:#fff;padding:0.25rem 0.5rem;border-radius:4px;display:block;">staff@demo.com / demo123</code>
-                        </div>
-                    </div>
                 </div>
                 <div class="card" style="margin-top: 2rem; border-top: 4px solid #10b981;">
                     <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
@@ -706,6 +696,31 @@
         </div>
     </div>
 
+    <div id="nfc-scan-modal" class="modal-overlay">
+        <div class="modal-content" style="text-align:center; padding: 2.5rem;">
+            <div id="nfc-scan-icon" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;">
+                <i class="fa-solid fa-wifi"></i>
+            </div>
+            <h3 id="nfc-scan-title" style="margin-bottom: 0.5rem;">Scanning...</h3>
+            <p id="nfc-scan-message" style="color: var(--text-light); margin-bottom: 1.5rem;">Hold your device near the NFC tag</p>
+            <div id="nfc-scan-progress" style="width: 100%; height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; margin-bottom: 1.5rem;">
+                <div id="nfc-scan-progress-bar" style="width: 30%; height: 100%; background: var(--primary); border-radius: 2px; animation: scanPulse 1.5s infinite;"></div>
+            </div>
+            <button id="nfc-scan-cancel" onclick="Scanner.cancelScan()" class="btn btn-secondary">Cancel</button>
+            <button id="nfc-scan-manual" onclick="Scanner.showManualFromScan()" class="btn btn-outline" style="margin-top:0.5rem;">Enter Manually</button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes scanPulse {
+            0% { width: 10%; margin-left: 0; }
+            50% { width: 40%; margin-left: 30%; }
+            100% { width: 10%; margin-left: 90%; }
+        }
+        .nfc-success { color: var(--success) !important; }
+        .nfc-error { color: var(--danger) !important; }
+    </style>
+
     <div id="view-all-modal" class="modal-overlay">
         <div class="modal-content" style="max-width:600px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
@@ -853,65 +868,6 @@
                     return !snapshot.empty;
                 } catch (e) {
                     return false;
-                }
-            },
-
-            createDemoAccounts: async () => {
-                UI.toggleLoader(true);
-                const btn = document.getElementById('demo-btn');
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
-                
-                try {
-                    const demoAdminEmail = 'admin@demo.com';
-                    const demoAdminPass = 'demo123';
-                    const demoStaffEmail = 'staff@demo.com';
-                    const demoStaffPass = 'demo123';
-                    const demoAdminUsername = 'DemoAdmin';
-                    const demoStaffUsername = 'DemoStaff';
-
-                    const adminCredential = await createUserWithEmailAndPassword(auth, demoAdminEmail, demoAdminPass);
-                    await addDoc(collection(db, "users"), {
-                        email: demoAdminEmail,
-                        username: demoAdminUsername,
-                        role: 'admin',
-                        uid: adminCredential.user.uid,
-                        createdAt: new Date(),
-                        verified: true
-                    });
-
-                    await signOut(auth);
-
-                    const adminSignIn = await signInWithEmailAndPassword(auth, demoAdminEmail, demoAdminPass);
-                    
-                    const staffCredential = await createUserWithEmailAndPassword(auth, demoStaffEmail, demoStaffPass);
-                    await addDoc(collection(db, "users"), {
-                        email: demoStaffEmail,
-                        username: demoStaffUsername,
-                        role: 'staff',
-                        uid: staffCredential.user.uid,
-                        createdAt: new Date(),
-                        adminEmail: demoAdminEmail,
-                        verified: true
-                    });
-
-                    await signOut(auth);
-
-                    document.getElementById('demo-accounts').style.display = 'block';
-                    btn.style.display = 'none';
-                    UI.showToast('Demo accounts created!');
-                } catch (error) {
-                    if (error.message.includes('already in use')) {
-                        document.getElementById('demo-accounts').style.display = 'block';
-                        btn.style.display = 'none';
-                        UI.showToast('Demo accounts already exist!');
-                    } else {
-                        UI.showToast('Error: ' + error.message, 'error');
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fa-solid fa-magic"></i> Create Demo Accounts';
-                    }
-                } finally {
-                    UI.toggleLoader(false);
                 }
             },
 
@@ -1314,40 +1270,78 @@
             currentItem: null,
             registrationReader: null,
 
+            showScanModal: () => {
+                document.getElementById('nfc-scan-modal').classList.add('open');
+                document.getElementById('nfc-scan-icon').innerHTML = '<i class="fa-solid fa-wifi fa-spin"></i>';
+                document.getElementById('nfc-scan-icon').style.color = 'var(--primary)';
+                document.getElementById('nfc-scan-title').innerText = 'Scanning...';
+                document.getElementById('nfc-scan-message').innerText = 'Hold your device near the NFC tag';
+                document.getElementById('nfc-scan-progress').style.display = 'block';
+                document.getElementById('nfc-scan-cancel').style.display = 'inline-flex';
+                document.getElementById('nfc-scan-manual').style.display = 'none';
+            },
+
+            closeScanModal: () => {
+                document.getElementById('nfc-scan-modal').classList.remove('open');
+                Scanner.stop();
+            },
+
+            showScanSuccess: (tagId) => {
+                document.getElementById('nfc-scan-icon').innerHTML = '<i class="fa-solid fa-check-circle"></i>';
+                document.getElementById('nfc-scan-icon').className = 'nfc-success';
+                document.getElementById('nfc-scan-title').innerText = 'Tag Found!';
+                document.getElementById('nfc-scan-message').innerText = 'ID: ' + tagId;
+                document.getElementById('nfc-scan-progress').style.display = 'none';
+                document.getElementById('nfc-scan-cancel').style.display = 'none';
+                document.getElementById('nfc-scan-manual').style.display = 'none';
+                setTimeout(() => {
+                    Scanner.closeScanModal();
+                    Scanner.handleScan(tagId);
+                }, 1000);
+            },
+
+            showScanError: (message) => {
+                document.getElementById('nfc-scan-icon').innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+                document.getElementById('nfc-scan-icon').className = 'nfc-error';
+                document.getElementById('nfc-scan-title').innerText = 'Scan Failed';
+                document.getElementById('nfc-scan-message').innerText = message;
+                document.getElementById('nfc-scan-progress').style.display = 'none';
+                document.getElementById('nfc-scan-cancel').innerText = 'Try Again';
+                document.getElementById('nfc-scan-manual').style.display = 'inline-flex';
+            },
+
+            showManualFromScan: () => {
+                Scanner.closeScanModal();
+                Scanner.showManualEntry();
+            },
+
+            cancelScan: () => {
+                Scanner.closeScanModal();
+            },
+
             start: async () => {
                 if (!('NDEFReader' in window)) {
-                    UI.showToast('NFC not supported', 'error');
-                    setTimeout(() => Scanner.showManualEntry(), 1000);
+                    Scanner.showScanError('NFC not supported on this device');
                     return;
                 }
 
-                const btn = document.getElementById('btn-start-scan');
-                if (btn) {
-                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning...';
-                    btn.disabled = true;
-                }
+                Scanner.showScanModal();
 
                 try {
                     const ndef = new NDEFReader();
                     Scanner.registrationReader = ndef;
                     await ndef.scan();
-                    UI.showToast('Scanning... hold tag near device');
                     
                     ndef.onreading = event => {
                         const tagId = event.serialNumber;
-                        UI.showToast('Tag detected: ' + tagId);
-                        Scanner.stop();
-                        Scanner.handleScan(tagId);
+                        Scanner.showScanSuccess(tagId);
                     };
                     
                     ndef.onerror = error => {
-                        UI.showToast('NFC Error: ' + error.message, 'error');
-                        Scanner.stop();
+                        Scanner.showScanError('Could not read NFC tag');
                     };
                 } catch (error) {
-                    UI.showToast('NFC Error: ' + error.message, 'error');
-                    Scanner.stop();
-                    setTimeout(() => Scanner.showManualEntry(), 1000);
+                    Scanner.showScanError('NFC not available');
                 }
             },
 
