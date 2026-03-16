@@ -411,7 +411,7 @@
         .search-box {
             position: relative;
             margin-bottom: 1rem;
-            z-index: 1;
+            z-index: 100;
         }
         .search-box input {
             width: 100%;
@@ -422,7 +422,8 @@
             background: var(--surface);
             color: var(--text-main);
             position: relative;
-            z-index: 1;
+            z-index: 100;
+            pointer-events: auto;
         }
         .search-box i {
             position: absolute;
@@ -734,7 +735,7 @@
                 </div>
                 <div class="search-box">
                     <i class="fa-solid fa-search"></i>
-                    <input type="text" id="inventory-search" placeholder="Search storage..." oninput="UI.filterInventory()">
+                    <input type="text" id="inventory-search" placeholder="Search storage...">
                 </div>
                 <div class="category-filter">
                     <div class="category-chip active" onclick="UI.filterCategory('all', this)">All</div>
@@ -1321,8 +1322,12 @@
             },
 
             filterInventory: () => {
-                UI.searchQuery = document.getElementById('inventory-search').value.toLowerCase();
-                UI.renderAdmin();
+                const searchInput = document.getElementById('inventory-search');
+                if (searchInput) {
+                    UI.searchQuery = searchInput.value.toLowerCase();
+                    console.log('Search query:', UI.searchQuery);
+                    UI.renderAdmin();
+                }
             },
 
             filterCategory: (category, el) => {
@@ -1456,11 +1461,17 @@
 
             renderAdmin: async () => {
                 try {
+                console.log('renderAdmin called, searchQuery:', UI.searchQuery, 'category:', UI.currentCategory);
+                
                 const invList = document.getElementById('inventory-list');
-                if (!invList) return;
+                if (!invList) {
+                    console.log('invList not found');
+                    return;
+                }
                 invList.innerHTML = '<div class="text-center" style="padding:2rem;color:var(--text-light);"><i class="fa-solid fa-spinner fa-spin"></i></div>';
                 
                 let invData = await DB.getInventory(Auth.currentUser.email);
+                console.log('Total inventory:', invData.length);
                 
                 // Filter by category
                 if (UI.currentCategory !== 'all') {
@@ -1469,11 +1480,13 @@
                 
                 // Filter by search
                 if (UI.searchQuery) {
+                    console.log('Applying search filter:', UI.searchQuery);
                     invData = invData.filter(item => 
                         item.name.toLowerCase().includes(UI.searchQuery) || 
                         (item.nfcId && item.nfcId.toLowerCase().includes(UI.searchQuery)) ||
                         (item.contents && item.contents.toLowerCase().includes(UI.searchQuery))
                     );
+                    console.log('After filter:', invData.length);
                 }
                 
                 // Calculate stats
@@ -1932,7 +1945,7 @@
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('DOMContentLoaded', () => {
             UI.initTheme();
             
             // Pre-fill email if remembered
@@ -1940,6 +1953,15 @@
             if (rememberedEmail) {
                 document.getElementById('login-email').value = rememberedEmail;
                 document.getElementById('remember-me').checked = true;
+            }
+            
+            // Search functionality with event listener
+            const searchInput = document.getElementById('inventory-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    UI.searchQuery = this.value.toLowerCase();
+                    UI.renderAdmin();
+                });
             }
             
             Auth.init();
