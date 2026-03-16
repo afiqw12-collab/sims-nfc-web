@@ -431,7 +431,8 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-light);
-            z-index: 2;
+            z-index: 101;
+            pointer-events: none;
         }
 
         .category-filter {
@@ -440,7 +441,7 @@
             margin-bottom: 1rem;
             flex-wrap: wrap;
             position: relative;
-            z-index: 1;
+            z-index: 100;
         }
         .category-chip {
             padding: 0.4rem 0.8rem;
@@ -452,7 +453,7 @@
             color: var(--text-light);
             transition: all 0.2s;
             position: relative;
-            z-index: 1;
+            z-index: 100;
         }
         .category-chip:hover, .category-chip.active {
             background: var(--primary);
@@ -492,12 +493,12 @@
             gap: 1rem;
             margin-bottom: 1.5rem;
             position: relative;
-            z-index: 1;
+            z-index: 100;
         }
 
         .stat-grid .stat-box {
             position: relative;
-            z-index: 1;
+            z-index: 100;
         }
         .stat-box {
             background: var(--surface);
@@ -1325,7 +1326,6 @@
                 const searchInput = document.getElementById('inventory-search');
                 if (searchInput) {
                     UI.searchQuery = searchInput.value.toLowerCase();
-                    console.log('Search query:', UI.searchQuery);
                     UI.renderAdmin();
                 }
             },
@@ -1461,17 +1461,11 @@
 
             renderAdmin: async () => {
                 try {
-                console.log('renderAdmin called, searchQuery:', UI.searchQuery, 'category:', UI.currentCategory);
-                
                 const invList = document.getElementById('inventory-list');
-                if (!invList) {
-                    console.log('invList not found');
-                    return;
-                }
+                if (!invList) return;
                 invList.innerHTML = '<div class="text-center" style="padding:2rem;color:var(--text-light);"><i class="fa-solid fa-spinner fa-spin"></i></div>';
                 
                 let invData = await DB.getInventory(Auth.currentUser.email);
-                console.log('Total inventory:', invData.length);
                 
                 // Filter by category
                 if (UI.currentCategory !== 'all') {
@@ -1480,13 +1474,11 @@
                 
                 // Filter by search
                 if (UI.searchQuery) {
-                    console.log('Applying search filter:', UI.searchQuery);
                     invData = invData.filter(item => 
                         item.name.toLowerCase().includes(UI.searchQuery) || 
                         (item.nfcId && item.nfcId.toLowerCase().includes(UI.searchQuery)) ||
                         (item.contents && item.contents.toLowerCase().includes(UI.searchQuery))
                     );
-                    console.log('After filter:', invData.length);
                 }
                 
                 // Calculate stats
